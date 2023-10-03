@@ -1,7 +1,6 @@
 import 'package:codezilla/constants/routes.dart';
 import 'package:codezilla/screens/login.dart';
 import 'package:codezilla/screens/patrol.dart';
-import 'package:codezilla/screens/profile.dart';
 import 'package:flutter/material.dart';
 
 import 'screens/home.dart';
@@ -26,7 +25,6 @@ class MyApp extends StatelessWidget {
         loginRoute: (context) => const LoginPage(),
         homeRoute: (context) => const HomePage(),
         patrolRoute: (context) => const PatrolPage(),
-        profileRoute: (context) => const ProfilePage()
       },
     );
   }

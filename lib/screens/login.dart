@@ -1,3 +1,4 @@
+import 'package:codezilla/screens/profile.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/input_dialog.dart';
@@ -87,6 +88,22 @@ class _VerifyGuardTagState extends State<VerifyGuardTag> {
     });
   }
 
+  _navigateToDisplayProfileScreen(BuildContext context) {
+    if (userInput != null) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) {
+            return Builder(
+              builder: (BuildContext innerContext) {
+                return ProfilePage(userInput: userInput!);
+              },
+            );
+          },
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,6 +142,9 @@ class _VerifyGuardTagState extends State<VerifyGuardTag> {
             ElevatedButton(
               onPressed: () {
                 //verify the tag details
+
+                //send user to profile page
+                _navigateToDisplayProfileScreen(context);
               },
               child: const Text('Verify Tag Info'),
             ),
