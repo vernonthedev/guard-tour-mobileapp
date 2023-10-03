@@ -1,9 +1,5 @@
-import 'package:codezilla/constants/routes.dart';
 import 'package:codezilla/screens/login.dart';
-import 'package:codezilla/screens/patrol.dart';
 import 'package:flutter/material.dart';
-
-import 'screens/home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,11 +17,6 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const LoginPage(),
-      routes: {
-        loginRoute: (context) => const LoginPage(),
-        homeRoute: (context) => const HomePage(),
-        patrolRoute: (context) => const PatrolPage(),
-      },
     );
   }
 }

@@ -5,7 +5,6 @@ class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key, required this.userInput});
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
