@@ -1,3 +1,6 @@
+import 'package:codezilla/screens/home.dart';
+import 'package:codezilla/screens/patrol.dart';
+import 'package:codezilla/screens/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -9,8 +12,11 @@ class MyDrawer extends StatelessWidget {
     return Drawer(
       child: ListView(
         children: <Widget>[
-          const DrawerHeader(
-            child: Text('Guard Tour App'),
+          Container(
+            color: Colors.grey,
+            child: const DrawerHeader(
+              child: Text('Guard Tour App'),
+            ),
           ),
           ListTile(
             leading: const Icon(
@@ -19,7 +25,10 @@ class MyDrawer extends StatelessWidget {
             ),
             title: const Text('Home'),
             onTap: () {
-              // Handle drawer item 1 click
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => HomePage(
+                        userInput: '',
+                      )));
             },
           ),
           ListTile(
@@ -29,7 +38,8 @@ class MyDrawer extends StatelessWidget {
             ),
             title: const Text('Patrol'),
             onTap: () {
-              // Handle drawer item 2 click
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const PatrolPage()));
             },
           ),
           ListTile(
@@ -39,7 +49,10 @@ class MyDrawer extends StatelessWidget {
             ),
             title: const Text('Profile'),
             onTap: () {
-              // Handle drawer item 2 click
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const ProfilePage(
+                        userInput: '',
+                      )));
             },
           ),
           ListTile(

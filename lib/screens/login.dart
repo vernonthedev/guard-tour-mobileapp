@@ -1,7 +1,5 @@
-import 'package:codezilla/screens/profile.dart';
 import 'package:flutter/material.dart';
 
-import '../widgets/input_dialog.dart';
 import 'verifyGuard.dart';
 
 class LoginPage extends StatefulWidget {
@@ -49,6 +47,7 @@ class _LoginPageState extends State<LoginPage> {
             decoration:
                 const InputDecoration(hintText: "Enter Your Site ID here"),
           ),
+          const SizedBox(height: 20),
           TextField(
             controller: _password,
             obscureText: true,
@@ -56,6 +55,7 @@ class _LoginPageState extends State<LoginPage> {
             autocorrect: false,
             decoration: const InputDecoration(hintText: "Enter Password"),
           ),
+          const SizedBox(height: 20),
           TextButton(
               onPressed: () async {
                 //assigning values of the text fields to the variables

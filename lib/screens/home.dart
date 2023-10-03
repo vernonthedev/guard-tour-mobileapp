@@ -25,7 +25,38 @@ class HomePage extends StatelessWidget {
           },
           child: const Icon(CupertinoIcons.bars),
         ),
-        middle: const Text('Home Screen'),
+        middle: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          decoration: BoxDecoration(
+            color: CupertinoColors.lightBackgroundGray,
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: CupertinoTextField(
+                  placeholder: 'Search',
+                  padding: EdgeInsets.zero,
+                  decoration: BoxDecoration(
+                    color: CupertinoColors.lightBackgroundGray,
+                  ),
+                ),
+              ),
+              CupertinoButton(
+                onPressed: () {
+                  // Handle search button click
+                  // You can implement the search functionality here
+                },
+                minSize: 0, // Set minSize to 0 to make the button smaller
+                padding: EdgeInsets.zero,
+                child: const Icon(
+                  CupertinoIcons.search,
+                  color: CupertinoColors.activeBlue,
+                ),
+              ),
+            ],
+          ),
+        ),
         trailing: PopupMenuButton(
           onSelected: (value) {},
           itemBuilder: (context) {
