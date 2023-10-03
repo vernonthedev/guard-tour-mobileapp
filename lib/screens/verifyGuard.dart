@@ -40,11 +40,7 @@ class _VerifyGuardTagState extends State<VerifyGuardTag> {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) {
-            return Builder(
-              builder: (BuildContext innerContext) {
-                return HomePage(userInput: userInput!);
-              },
-            );
+            return HomePage(userInput: userInput!);
           },
         ),
       );
