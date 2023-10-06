@@ -70,7 +70,7 @@ class _PatrolPageState extends State<PatrolPage> {
             return ElevatedButton.icon(
               onPressed: () {
                 // Handle submit action here
-                _errorConfirmationDialog(context);
+                _showConfirmationDialog(context);
               },
               label: const Text("Submit Patrol Session"),
               icon: const Icon(
@@ -132,7 +132,7 @@ void _showConfirmationDialog(BuildContext context) {
         content: const Text(
           "Do you want to store and upload the patrol session?",
           style: TextStyle(
-            fontSize: 20.0,
+            fontSize: 15.0,
           ),
         ),
         actions: [
@@ -206,7 +206,7 @@ void _errorConfirmationDialog(BuildContext context) {
         content: const Text(
           "Please Make sure you scan all tags before you make a submission!",
           style: TextStyle(
-            fontSize: 20.0, // Adjust the font size as needed
+            fontSize: 15.0, // Adjust the font size as needed
           ),
         ),
         actions: [
