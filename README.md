@@ -1,16 +1,23 @@
-# codezilla
+<div id="header" align="center">
+ <img src="https://github.com/vernonthedev/File-Management-System/assets/108737724/a5c0c0e3-0f4f-4ab9-9bf6-c256ff2efd86" width="300px" />
+</div>
 
-A new Flutter project.
+<div id="badges" align="center">
+  <a href="https://www.linkedin.com/in/vernonthedev/">
+    <img src="https://img.shields.io/badge/LinkedIn-blue?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Badge"/>
+  </a>
+  <a href="https://www.youtube.com/channel/UCjNin5VUso1QXPSS7YFsIDQ">
+    <img src="https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white" alt="Youtube Badge"/>
+  </a>
+  <a href="https://twitter.com/vernonthedev">
+    <img src="https://img.shields.io/badge/Twitter-blue?style=for-the-badge&logo=twitter&logoColor=white" alt="Twitter Badge"/>
+  </a><br>
+  <img src="https://komarev.com/ghpvc/?username=vernonthedev&style=flat-square&color=blue" alt=""/>
+</div>
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Guard Tour Mobile Application
+Application was developed using flutter that allows the guard to make patrols over a building by scanning rfid tags
+And the system will store information and upload it to the main web server at an appointed time.
