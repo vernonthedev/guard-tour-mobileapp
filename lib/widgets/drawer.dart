@@ -26,7 +26,7 @@ class MyDrawer extends StatelessWidget {
             title: const Text('Home'),
             onTap: () {
               Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => HomePage(
+                  builder: (context) => const HomePage(
                         userInput: '',
                       )));
             },
@@ -55,6 +55,7 @@ class MyDrawer extends StatelessWidget {
                       )));
             },
           ),
+          const Spacer(),
           ListTile(
             leading: const Icon(
               CupertinoIcons.person_badge_minus_fill,

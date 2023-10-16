@@ -5,12 +5,18 @@ import '../widgets/drawer.dart';
 
 enum MenuAction { nightshift, dayshift, startPatrol }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final String userInput;
 
-  HomePage({Key? key, required this.userInput}) : super(key: key);
+  const HomePage({Key? key, required this.userInput}) : super(key: key);
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final TextEditingController _searchController = TextEditingController();
 
   final List<Map<String?, String?>> dataList = [
     {
@@ -23,15 +29,15 @@ class HomePage extends StatelessWidget {
     },
     {
       'title': 'Guard Name',
-      'name': 'Name 2',
+      'name': 'vernon',
     },
     {
       'title': 'Guard Name',
-      'name': 'Name 3',
+      'name': 'mark',
     },
     {
       'title': 'Guard Name',
-      'name': 'Name 4',
+      'name': 'john',
     },
     {
       'title': 'Guard Name',
@@ -55,7 +61,7 @@ class HomePage extends StatelessWidget {
     },
     {
       'title': 'Guard Name',
-      'name': 'Name 10',
+      'name': 'bro',
     },
     {
       'title': 'Guard Name',
@@ -79,6 +85,24 @@ class HomePage extends StatelessWidget {
     },
     // Add more items as needed
   ];
+  //the searched data
+  List<Map<String?, String?>> filteredData = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize filteredData with all data initially
+    filteredData = List.from(dataList);
+  }
+
+  void filterData(String query) {
+    setState(() {
+      filteredData = dataList
+          .where((item) =>
+              (item['name'] ?? '').toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,13 +123,18 @@ class HomePage extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: CupertinoTextField(
+                  controller: _searchController,
                   placeholder: 'Search',
                   padding: EdgeInsets.zero,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: CupertinoColors.lightBackgroundGray,
                   ),
+                  onChanged: (query) {
+                    filterData(query);
+                    debugPrint(query);
+                  },
                 ),
               ),
               CupertinoButton(
@@ -169,9 +198,17 @@ class HomePage extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: dataList.length,
+              itemCount: _searchController.text.isEmpty
+                  ? dataList
+                      .length // Display all items when the search query is empty
+                  : filteredData
+                      .length, // Use filteredData when a search query is present
               itemBuilder: (context, index) {
-                final item = dataList[index];
+                final item = _searchController.text.isEmpty
+                    ? dataList[
+                        index] // Use dataList when the search query is empty
+                    : filteredData[
+                        index]; // Use filteredData when a search query is present
                 return CustomListTile(
                   title: item['title'] ?? '',
                   subtitle1: 'Date',
@@ -190,6 +227,12 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Handle the FAB click event here
+        },
+        child: const Icon(CupertinoIcons.add),
       ),
     );
   }
