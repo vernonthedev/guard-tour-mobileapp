@@ -1,243 +1,174 @@
-import 'package:codezilla/modals/patrol_tags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class PatrolPage extends StatefulWidget {
-  const PatrolPage({super.key});
-
   @override
   _PatrolPageState createState() => _PatrolPageState();
 }
 
 class _PatrolPageState extends State<PatrolPage> {
-  List<PatrolTags> items = [
-    PatrolTags("Tag 1", "ID123", false),
-    PatrolTags("Tag 2", "ID123", true),
-    PatrolTags("Tag 3", "ID123", false),
-    PatrolTags("Tag 4", "ID123", true),
-    PatrolTags("Tag 5", "ID123", true),
-    PatrolTags("Tag 6", "ID123", false),
-    PatrolTags("Tag 7", "ID123", false),
-    PatrolTags("Tag 8", "ID123", true),
-    PatrolTags("Tag 9", "ID123", true),
-    PatrolTags("Tag 10", "ID123", false),
-    PatrolTags("Tag 11", "ID123", true),
-    PatrolTags("Tag 12", "ID123", false),
-    PatrolTags("Tag 13", "ID123", true),
-    PatrolTags("Tag 14", "ID123", false),
-    PatrolTags("Tag 15", "ID123", true),
-    PatrolTags("Tag 16", "ID123", true),
-  ];
+  List<bool> tagScannedStatus =
+      List.generate(50, (index) => false); // Initialize all tags as not scanned
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Patrol Tag Status"),
-      ),
-      body: ListView.builder(
-        itemCount: items.length + 1, // +1 for the submit button
-        itemBuilder: (context, index) {
-          if (index < items.length) {
-            final item = items[index];
-            return ListTile(
-              leading: const Icon(CupertinoIcons.tag_circle_fill),
-              title: GestureDetector(
-                onTap: () {
-                  // Print the name of the tapped item
-                  _showItemDialog(context, item);
-                },
-                child: Text(item.name),
+      body: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 50),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const <Widget>[
+                  Icon(
+                    CupertinoIcons.checkmark_shield_fill,
+                    color: CupertinoColors.activeBlue,
+                    size: 40,
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    'Make Patrol',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
-              trailing: item.scanned
-                  ? const Icon(CupertinoIcons.check_mark_circled,
-                      color: Colors.green)
-                  : const Icon(CupertinoIcons.circle, color: Colors.red),
-            );
-          } else {
-            // Return the submit button
+            ),
+          ),
+          const Text(
+            'Please Scan The Tags And Verify For Upload..',
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: 50,
+              itemBuilder: (context, index) {
+                final siteTag = "Site Tag $index";
+                final isScanned = tagScannedStatus[index];
 
-            const SizedBox(height: 20);
-            return ElevatedButton.icon(
-              onPressed: () {
-                // Handle submit action here
-                _showConfirmationDialog(context);
+                return GestureDetector(
+                  onTap: () {
+                    _showTagDescriptionDialog(siteTag, isScanned);
+                  },
+                  child: Card(
+                    margin: EdgeInsets.all(8),
+                    child: ListTile(
+                      title: Text(siteTag),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          _buildScanInput(siteTag, index, isScanned),
+                          SizedBox(width: 8),
+                          Text(isScanned ? 'Scanned' : 'Not Scanned'),
+                          SizedBox(width: 8),
+                          _buildScanStatusIcon(isScanned),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
               },
-              label: const Text("Submit Patrol Session"),
-              icon: const Icon(
-                CupertinoIcons.arrow_up_bin_fill,
-                size: 25.0, // Adjust the size as needed
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: CupertinoButton(
+              onPressed: () {
+                // Handle the upload patrol action
+              },
+              // color: CupertinoColors.activeBlue,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const <Widget>[
+                  Icon(
+                    CupertinoIcons.cloud_upload_fill,
+                    color: CupertinoColors.activeGreen,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    'Upload Patrol',
+                    style: TextStyle(
+                        fontSize: 16, color: CupertinoColors.activeGreen),
+                  ),
+                ],
               ),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(
-                    50.0, 40.0), // Adjust the width and height as needed
-              ),
-            );
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScanInput(String siteTag, int index, bool isScanned) {
+    return Container(
+      width: 70,
+      child: TextFormField(
+        onChanged: (value) {
+          if (value.isNotEmpty) {
+            setState(() {
+              tagScannedStatus[index] = true;
+            });
           }
         },
+        decoration: InputDecoration(
+          labelText: 'Scan',
+          border: OutlineInputBorder(),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: isScanned
+                  ? CupertinoColors.systemGreen
+                  : CupertinoColors.systemRed,
+            ),
+          ),
+        ),
       ),
+    );
+  }
+
+  Widget _buildScanStatusIcon(bool isScanned) {
+    return Icon(
+      isScanned ? CupertinoIcons.check_mark : CupertinoIcons.xmark,
+      color:
+          isScanned ? CupertinoColors.systemGreen : CupertinoColors.systemRed,
+    );
+  }
+
+  void _showTagDescriptionDialog(String siteTag, bool isScanned) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Tag Description - $siteTag'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text('Status: ${isScanned ? 'Scanned' : 'Not Scanned'}'),
+              // You can add more details here
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
 
-void _showItemDialog(BuildContext context, PatrolTags item) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text("Tag Details"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Tag Name: ${item.name}"),
-            Text("Tag ID: ${item.id}"),
-            Text("Status: ${item.scanned ? 'Scanned' : 'Not Scanned'}"),
-            const SizedBox(height: 16.0),
-            Center(
-              child: item.scanned
-                  ? const Icon(Icons.check, color: Colors.green, size: 40.0)
-                  : const Icon(Icons.cancel, color: Colors.red, size: 40.0),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text("Close"),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-void _showConfirmationDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return CupertinoAlertDialog(
-        title: const Text("Upload Patrol Session"),
-        content: const Text(
-          "Do you want to store and upload the patrol session?",
-          style: TextStyle(
-            fontSize: 15.0,
-          ),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            child: Row(
-              children: const [
-                Icon(
-                  CupertinoIcons.square_arrow_left_fill,
-                  size: 40.0,
-                ),
-                Text(" Store for future Upload"),
-              ],
-            ),
-            onPressed: () {
-              // Handle store action here
-              Navigator.of(context).pop();
-            },
-          ),
-          CupertinoDialogAction(
-            child: Row(
-              children: const [
-                Icon(
-                  CupertinoIcons.cloud_upload_fill,
-                  size: 40.0,
-                ),
-                Text(
-                  " Upload to Web System",
-                  style: TextStyle(
-                    fontSize: 20.0, // Adjust the font size as needed
-                  ),
-                ),
-              ],
-            ),
-            onPressed: () {
-              // Handle upload action here
-              Navigator.of(context).pop();
-            },
-          ),
-          CupertinoDialogAction(
-            child: Row(
-              children: const [
-                Icon(
-                  CupertinoIcons.xmark_circle_fill,
-                  size: 40.0,
-                ),
-                Text(
-                  " Cancel Patrol Session",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                  ),
-                ),
-              ],
-            ),
-            onPressed: () {
-              // Handle cancel action here
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
-
-void _errorConfirmationDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return CupertinoAlertDialog(
-        title: const Text("Not All Tags Are Scanned"),
-        content: const Text(
-          "Please Make sure you scan all tags before you make a submission!",
-          style: TextStyle(
-            fontSize: 15.0, // Adjust the font size as needed
-          ),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            child: Row(
-              children: const [
-                Icon(
-                  CupertinoIcons.arrow_2_circlepath_circle_fill,
-                  size: 40.0,
-                ),
-                Text(" Scan Missing Tags"),
-              ],
-            ),
-            onPressed: () {
-              // Handle upload action here
-              Navigator.of(context).pop();
-            },
-          ),
-          CupertinoDialogAction(
-            child: Row(
-              children: const [
-                Icon(
-                  CupertinoIcons.xmark_circle_fill,
-                  size: 40.0,
-                ),
-                Text(
-                  " Cancel Patrol Session",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                  ),
-                ),
-              ],
-            ),
-            onPressed: () {
-              // Handle cancel action here
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        body: PatrolPage(),
+      ),
+    ),
   );
 }
