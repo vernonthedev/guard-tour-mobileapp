@@ -1,4 +1,5 @@
 import 'package:codezilla/screens/home.dart';
+import 'package:codezilla/screens/patrol.dart';
 import 'package:codezilla/screens/profile.dart';
 import 'package:flutter/material.dart';
 
