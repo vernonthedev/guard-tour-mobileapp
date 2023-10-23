@@ -336,7 +336,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           // Handle the FAB click event here
         },
-        child: Icon(Icons.add),
+        child: const Icon(CupertinoIcons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
