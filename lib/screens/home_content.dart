@@ -2,98 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class HomePageContent extends StatefulWidget {
-  const HomePageContent({super.key});
+  const HomePageContent({Key? key}) : super(key: key);
 
   @override
   _HomePageContentState createState() => _HomePageContentState();
 }
 
 class _HomePageContentState extends State<HomePageContent> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final TextEditingController _searchController = TextEditingController();
+  bool isNightShift = false;
+  TextEditingController searchController = TextEditingController();
 
-  final List<Map<String?, String?>> dataList = [
+  List<Map<String, dynamic>> patrols = [
     {
-      'title': 'Guard Name',
-      'name': 'Name 0',
+      'date': '2023-01-15',
+      'time': '08:00 AM',
+      'guardName': 'John Doe',
+      'uploadStatus': 'Completed',
+      'shift': 'Day',
     },
     {
-      'title': 'Guard Name',
-      'name': 'Name 1',
+      'date': '2023-01-16',
+      'time': '09:30 AM',
+      'guardName': 'Jane Smith',
+      'uploadStatus': 'Pending',
+      'shift': 'Night',
     },
-    {
-      'title': 'Guard Name',
-      'name': 'vernon',
-    },
-    {
-      'title': 'Guard Name',
-      'name': 'mark',
-    },
-    {
-      'title': 'Guard Name',
-      'name': 'john',
-    },
-    {
-      'title': 'Guard Name',
-      'name': 'Name 5',
-    },
-    {
-      'title': 'Guard Name',
-      'name': 'Name 6',
-    },
-    {
-      'title': 'Guard Name',
-      'name': 'Name 7',
-    },
-    {
-      'title': 'Guard Name',
-      'name': 'Name 8',
-    },
-    {
-      'title': 'Guard Name',
-      'name': 'Name 9',
-    },
-    {
-      'title': 'Guard Name',
-      'name': 'bro',
-    },
-    {
-      'title': 'Guard Name',
-      'name': 'Name 11',
-    },
-    {
-      'title': 'Guard Name',
-      'name': 'Name 12',
-    },
-    {
-      'title': 'Guard Name',
-      'name': 'Name 13',
-    },
-    {
-      'title': 'Guard Name',
-      'name': 'Name 14',
-    },
-    {
-      'title': 'Guard Name',
-      'name': 'Name 15',
-    },
-    // Add more items as needed
+    // Add more patrol data
   ];
-  //the searched data
-  List<Map<String?, String?>> filteredData = [];
+
+  List<Map<String, dynamic>> filteredPatrols = [];
 
   @override
   void initState() {
     super.initState();
-    // Initialize filteredData with all data initially
-    filteredData = List.from(dataList);
+    filteredPatrols = List.from(patrols);
   }
 
-  void filterData(String query) {
+  void filterPatrols() {
+    String query = searchController.text.toLowerCase();
     setState(() {
-      filteredData = dataList
-          .where((item) =>
-              (item['name'] ?? '').toLowerCase().contains(query.toLowerCase()))
+      filteredPatrols = patrols
+          .where((patrol) =>
+              patrol['guardName'].toLowerCase().contains(query) &&
+              (isNightShift ? patrol['shift'] == 'Night' : true))
           .toList();
     });
   }
@@ -101,89 +52,95 @@ class _HomePageContentState extends State<HomePageContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(12.0),
-              child: Text(
-                'List Of Made Patrols', // Replace with your desired text
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _searchController.text.isEmpty
-                    ? dataList
-                        .length // Display all items when the search query is empty
-                    : filteredData
-                        .length, // Use filteredData when a search query is present
-                itemBuilder: (context, index) {
-                  final item = _searchController.text.isEmpty
-                      ? dataList[
-                          index] // Use dataList when the search query is empty
-                      : filteredData[
-                          index]; // Use filteredData when a search query is present
-                  return CustomListTile(
-                    title: item['title'] ?? '',
-                    subtitle1: 'Date',
-                    subtitle2: 'Patrol Time',
-                    trailingIcon: const Icon(
-                      CupertinoIcons.cloud_upload_fill,
-                      color: CupertinoColors.systemBlue,
-                    ),
-                    onTap: () {
-                      final itemName = item['name'] ?? '';
-                      debugPrint("You have pressed $itemName");
-                      // Handle item tap using itemName
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Handle the FAB click event here
-          },
-          child: const Icon(CupertinoIcons.add),
-        ));
-  }
-}
-
-class CustomListTile extends StatelessWidget {
-  final String title;
-  final String subtitle1;
-  final String subtitle2;
-  final Widget trailingIcon;
-  final VoidCallback? onTap;
-
-  const CustomListTile({
-    super.key,
-    required this.title,
-    required this.subtitle1,
-    required this.subtitle2,
-    required this.trailingIcon,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(title),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
         children: [
-          Text(subtitle1),
-          Text(subtitle2),
+          const SizedBox(height: 50), // Adds space at the top
+          Align(
+            alignment: Alignment.topCenter,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const <Widget>[
+                Icon(
+                  CupertinoIcons.xmark_shield_fill,
+                  color: CupertinoColors.activeBlue,
+                  size: 24,
+                ),
+                SizedBox(width: 8),
+                Text(
+                  'Guard Tour Home',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20), // Adds space between title and search
+          Center(
+            child: SizedBox(
+              width: double.infinity,
+              child: CupertinoTextField(
+                controller: searchController,
+                placeholder: 'Search by Guard Name',
+                onChanged: (query) {
+                  filterPatrols();
+                },
+                prefix: const Icon(CupertinoIcons.search),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Night Shift',
+                  style: TextStyle(fontSize: 18),
+                ),
+                CupertinoSwitch(
+                  value: isNightShift,
+                  onChanged: (value) {
+                    setState(() {
+                      isNightShift = value;
+                      filterPatrols();
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredPatrols.length,
+              itemBuilder: (context, index) {
+                final patrol = filteredPatrols[index];
+                return ListTile(
+                  title: Text('Guard Name: ${patrol['guardName']}'),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Date: ${patrol['date']}'),
+                      Text('Time: ${patrol['time']}'),
+                      Text('Upload Status: ${patrol['uploadStatus']}'),
+                    ],
+                  ),
+                  trailing: Icon(
+                    patrol['uploadStatus'] == 'Completed'
+                        ? CupertinoIcons.check_mark_circled
+                        : CupertinoIcons.hourglass,
+                    color: patrol['uploadStatus'] == 'Completed'
+                        ? CupertinoColors.activeGreen
+                        : CupertinoColors.systemYellow,
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
-      trailing: trailingIcon,
-      onTap: onTap,
     );
   }
 }
