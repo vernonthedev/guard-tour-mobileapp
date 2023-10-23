@@ -2,15 +2,6 @@ import 'package:codezilla/modals/patrol_tags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-// class PatrolPage extends StatelessWidget {
-//   const PatrolPage({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold();
-//   }
-// }
-
 class PatrolPage extends StatefulWidget {
   const PatrolPage({super.key});
 
