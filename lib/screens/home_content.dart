@@ -1,3 +1,4 @@
+import 'package:codezilla/screens/patrol.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -140,6 +141,26 @@ class _HomePageContentState extends State<HomePageContent> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: CupertinoButton(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(
+              CupertinoIcons.add_circled_solid,
+              color: CupertinoColors.activeBlue,
+            ),
+            SizedBox(width: 10),
+            Text(
+              'Start Patrol',
+              style: TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+        onPressed: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => PatrolPage()));
+        },
       ),
     );
   }
