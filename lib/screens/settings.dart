@@ -54,6 +54,15 @@ class Settings extends StatelessWidget {
             },
           ),
           const Divider(),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.browser_updated_rounded),
+            title: const Text('Update Guard Information'),
+            onTap: () {
+              // Navigate to the About Us page
+            },
+          ),
+          const Divider(),
           ListTile(
             leading:
                 const Icon(CupertinoIcons.arrow_counterclockwise_circle_fill),
