@@ -54,16 +54,16 @@ class _PatrolPageState extends State<PatrolPage> {
                     _showTagDescriptionDialog(siteTag, isScanned);
                   },
                   child: Card(
-                    margin: EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
                     child: ListTile(
                       title: Text(siteTag),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           _buildScanInput(siteTag, index, isScanned),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Text(isScanned ? 'Scanned' : 'Not Scanned'),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           _buildScanStatusIcon(isScanned),
                         ],
                       ),
@@ -99,11 +99,21 @@ class _PatrolPageState extends State<PatrolPage> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(
+            // CupertinoIcons.archivebox_fill,
+            // color: CupertinoColors.activeOrange,
+            Icons.archive),
+        onPressed: () {
+          // Add your archive action here
+          // This is what happens when the button is pressed.
+        },
+      ),
     );
   }
 
   Widget _buildScanInput(String siteTag, int index, bool isScanned) {
-    return Container(
+    return SizedBox(
       width: 70,
       child: TextFormField(
         onChanged: (value) {
@@ -115,7 +125,7 @@ class _PatrolPageState extends State<PatrolPage> {
         },
         decoration: InputDecoration(
           labelText: 'Scan',
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
               color: isScanned
@@ -154,7 +164,7 @@ class _PatrolPageState extends State<PatrolPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Close'),
+              child: const Text('Close'),
             ),
           ],
         );
