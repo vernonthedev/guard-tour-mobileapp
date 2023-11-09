@@ -18,7 +18,6 @@ class verifyGuardTag extends StatefulWidget {
   _verifyGuardTagState createState() => _verifyGuardTagState();
 }
 
-// ignore: camel_case_types
 class _verifyGuardTagState extends State<verifyGuardTag> {
   String? userInput;
 
