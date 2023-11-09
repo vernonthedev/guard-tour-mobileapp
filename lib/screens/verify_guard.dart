@@ -122,6 +122,26 @@ class _verify_guardTagState extends State<verify_guardTag> {
                         style: const TextStyle(fontSize: 24),
                       ),
                     ),
+                    ListTile(
+                      title: const Text(
+                        'Guard ID Tag:',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      subtitle: Text(
+                        userInput ?? 'No Tag Id Scanned',
+                        style: const TextStyle(fontSize: 24),
+                      ),
+                    ),
+                    ListTile(
+                      title: const Text(
+                        'Guard ID Tag:',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      subtitle: Text(
+                        userInput ?? 'No Tag Id Scanned',
+                        style: const TextStyle(fontSize: 24),
+                      ),
+                    ),
                   ],
                 ),
               ),

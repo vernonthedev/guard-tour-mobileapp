@@ -1,3 +1,9 @@
+/*
+Project Name: Guard Tour Mobile App
+Developer: vernonthedev
+File Name: home.dart
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -6,6 +12,8 @@ import 'patrol.dart';
 import 'profile.dart';
 import 'settings.dart';
 
+// stateful because it handles the switching between the diff
+// bottom navigation sections
 class HomePage extends StatefulWidget {
   const HomePage({
     Key? key,
@@ -16,8 +24,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedTabIndex = 0; // Index of the selected tab
+  // Index of the selected tab
+  int _selectedTabIndex = 0;
 
+  // all the navigation pages
   final List<Widget> _pages = [
     const HomePageContent(),
     PatrolPage(),
@@ -25,6 +35,7 @@ class _HomePageState extends State<HomePage> {
     const Settings(),
   ];
 
+  // when we press a tab, select its appropriate page
   void _onTabTapped(int index) {
     setState(() {
       _selectedTabIndex = index;

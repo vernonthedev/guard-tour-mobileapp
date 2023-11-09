@@ -1,14 +1,24 @@
+/*
+Project Name: Guard Tour Mobile App
+Developer: vernonthedev
+File Name: patrol.dart
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
+// stful because most logic is here for scanning the tags during a patrol session
 class PatrolPage extends StatefulWidget {
+  const PatrolPage({super.key});
+
   @override
   _PatrolPageState createState() => _PatrolPageState();
 }
 
 class _PatrolPageState extends State<PatrolPage> {
   List<bool> tagScannedStatus =
-      List.generate(50, (index) => false); // Initialize all tags as not scanned
+      // Initialize all tags as not scanned
+      List.generate(50, (index) => false);
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +60,8 @@ class _PatrolPageState extends State<PatrolPage> {
                 final isScanned = tagScannedStatus[index];
 
                 return GestureDetector(
+                  // on every entry to the scan input for the tag list card
+                  // state of isScanned var is changed to show the relevant scan status
                   onTap: () {
                     _showTagDescriptionDialog(siteTag, isScanned);
                   },
@@ -60,10 +72,12 @@ class _PatrolPageState extends State<PatrolPage> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
+                          // embedded input in the list, for scanning option for the tags
                           _buildScanInput(siteTag, index, isScanned),
                           const SizedBox(width: 8),
                           Text(isScanned ? 'Scanned' : 'Not Scanned'),
                           const SizedBox(width: 8),
+                          // icon changing according to scanning state for each list tag
                           _buildScanStatusIcon(isScanned),
                         ],
                       ),
@@ -77,7 +91,7 @@ class _PatrolPageState extends State<PatrolPage> {
             alignment: Alignment.center,
             child: CupertinoButton(
               onPressed: () {
-                // Handle the upload patrol action
+                //TODO: Handle the upload patrol action
               },
               // color: CupertinoColors.activeBlue,
               child: Row(
@@ -100,18 +114,15 @@ class _PatrolPageState extends State<PatrolPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(
-            // CupertinoIcons.archivebox_fill,
-            // color: CupertinoColors.activeOrange,
-            Icons.archive),
+        child: const Icon(Icons.archive),
         onPressed: () {
-          // Add your archive action here
-          // This is what happens when the button is pressed.
+          //TODO: Add your archive action here
         },
       ),
     );
   }
 
+  // a realtime input that will be used as a scanner for the tag
   Widget _buildScanInput(String siteTag, int index, bool isScanned) {
     return SizedBox(
       width: 70,
@@ -138,6 +149,7 @@ class _PatrolPageState extends State<PatrolPage> {
     );
   }
 
+  // a realtime icon that will be used as a scanner for the tag
   Widget _buildScanStatusIcon(bool isScanned) {
     return Icon(
       isScanned ? CupertinoIcons.check_mark : CupertinoIcons.xmark,
@@ -146,6 +158,7 @@ class _PatrolPageState extends State<PatrolPage> {
     );
   }
 
+// tag description card leading section for the text and ending section for scan status
   void _showTagDescriptionDialog(String siteTag, bool isScanned) {
     showDialog(
       context: context,
@@ -171,14 +184,4 @@ class _PatrolPageState extends State<PatrolPage> {
       },
     );
   }
-}
-
-void main() {
-  runApp(
-    MaterialApp(
-      home: Scaffold(
-        body: PatrolPage(),
-      ),
-    ),
-  );
 }

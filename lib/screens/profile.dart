@@ -1,3 +1,9 @@
+/*
+Project Name: Guard Tour Mobile App
+Developer: vernonthedev
+File Name: profile.dart
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -11,12 +17,13 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   int _selectedTabIndex = 0; // Index of the selected tab
 
+  // all the profile sections
   final List<Widget> _tabPages = [
-    SiteProfileTab(),
+    const SiteProfileTab(),
     const ShiftTab(shift: 'Night Shift'),
     const ShiftTab(shift: 'Day Shift'),
   ];
-
+  // change state depending on which tab has been selected
   void _onTabTapped(int index) {
     setState(() {
       _selectedTabIndex = index;
@@ -51,7 +58,11 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
+// the site profile widget that displays all about the site where the
+// deployed logged in
 class SiteProfileTab extends StatelessWidget {
+  const SiteProfileTab({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -73,6 +84,7 @@ class SiteProfileTab extends StatelessWidget {
                     ),
                   ),
                 ),
+                // TODO: Get the site profile data from the api
                 ListTile(
                   title: Text('Name of Site'),
                   subtitle: Text('Your Site Name'),
@@ -102,6 +114,7 @@ class SiteProfileTab extends StatelessWidget {
   }
 }
 
+// shift tab
 class ShiftTab extends StatelessWidget {
   final String shift;
 
@@ -121,6 +134,7 @@ class ShiftTab extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
+          // TODO: Get the guard shift data from the api
           const ListTile(
             title: Text('Start Time'),
             subtitle: Text('8:00 PM'),

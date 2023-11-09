@@ -1,8 +1,15 @@
+/*
+Project Name: Guard Tour Mobile App
+Developer: vernonthedev
+File Name: home.dart
+*/
+
 import 'package:flutter/material.dart';
 import 'verify_guard.dart';
 import 'package:flutter/cupertino.dart';
 import '../functions/login_function.dart';
 
+// stful b'coz we are going to be checking for token availability state
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -11,11 +18,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  // circular progress indicator state
   bool _isLoading = false;
-
+  // set controllers to handle the way retrieve data from the inputs
   late final TextEditingController _siteID;
   late final TextEditingController _password;
 
+  // initialise the controllers
   @override
   void initState() {
     _siteID = TextEditingController();
@@ -23,6 +32,7 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
+  // always dispose the state that we create
   @override
   void dispose() {
     _siteID.dispose();
@@ -43,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
               color: Color(0xFF2E8B57), // Full hex code with 100% opacity
             ),
             const SizedBox(height: 20),
+            // HEADING
             const Text(
               "Login to Guard Tour System!",
               style: TextStyle(
@@ -50,6 +61,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 20),
+            // USERNAME INPUT BOX WIDGET
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextField(
@@ -64,6 +76,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 20),
+            // PASSWORD INPUT BOX WIDGET
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextField(
@@ -78,8 +91,10 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 20),
+            // LOGIN SUBMIT BUTTON
             CupertinoButton(
               onPressed: () async {
+                // pick data from the text inputs and assign it to vars
                 final siteID = _siteID.text;
                 final password = _password.text;
                 debugPrint("Site Id is: $siteID and Password is $password");
@@ -92,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                   _isLoading =
                       false; // Set the loading state to false once authentication is complete
                 });
-
+                // move to guard verification screen when we return the token from the auth function
                 if (token != null) {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => const verify_guardTag()));
@@ -111,6 +126,7 @@ class _LoginPageState extends State<LoginPage> {
               color: const Color(0xFF2E8B57),
               child: const Text("Login"), // Change button color if needed
             ),
+            // DISPLAY THE CIRCULAR PROGRESS FOR THE LOGIN REQUESTS
             if (_isLoading)
               const Center(
                 child: CircularProgressIndicator(),
