@@ -182,8 +182,8 @@ class _HomePageContentState extends State<HomePageContent> {
           ],
         ),
         onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => PatrolPage()));
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const PatrolPage()));
         },
       ),
     );
