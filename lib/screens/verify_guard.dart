@@ -1,4 +1,4 @@
-import 'package:codezilla/screens/home.dart';
+import 'package:guard_tour/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -27,7 +27,7 @@ class _verify_guardTagState extends State<verify_guardTag> {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) {
-            return HomePage(userInput: userInput!);
+            return const HomePage();
           },
         ),
       );

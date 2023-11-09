@@ -1,6 +1,6 @@
 {
-    "name": "codezilla",
-    "short_name": "codezilla",
+    "name": "guard_tour",
+    "short_name": "guard_tour",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
