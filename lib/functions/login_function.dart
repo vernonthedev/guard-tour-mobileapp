@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<String?> loginUser(String username, String password) async {
   var url = Uri.parse('http://app.legitsystemsug.com:3000/auth/signin');
@@ -21,7 +22,8 @@ Future<String?> loginUser(String username, String password) async {
       var jsonResponse = json.decode(response.body);
       if (jsonResponse.containsKey('access_token')) {
         String token = jsonResponse['access_token'];
-        debugPrint(token);
+        // Store token in SharedPreferences
+        await _saveToken(token);
 
         return token;
       } else {
@@ -36,4 +38,9 @@ Future<String?> loginUser(String username, String password) async {
     debugPrint('Exception occurred: $e');
     return null;
   }
+}
+
+Future<void> _saveToken(String token) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('token', token);
 }
