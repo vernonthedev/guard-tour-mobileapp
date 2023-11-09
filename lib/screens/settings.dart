@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'login.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
@@ -67,7 +70,8 @@ class Settings extends StatelessWidget {
             leading:
                 const Icon(CupertinoIcons.arrow_counterclockwise_circle_fill),
             title: const Text('Logout'),
-            onTap: () {
+            onTap: () async {
+              await _logout(context);
               // Implement contact support functionality
             },
           ),
@@ -75,5 +79,16 @@ class Settings extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token'); // Remove token from SharedPreferences
+
+    // Navigate back to the login page
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    ); // Replace with your route name for the login page
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 Future<String?> showInputDialog(BuildContext context) async {
@@ -21,14 +22,19 @@ Future<String?> showInputDialog(BuildContext context) async {
           children: <Widget>[
             const SizedBox(height: 20),
             Row(
+              mainAxisAlignment:
+                  MainAxisAlignment.center, // Center the content horizontally
               children: const <Widget>[
                 Icon(
-                  Icons.scanner, // Icon for tag scanning
-                  size: 24.0,
-                  color: Colors.blue, // Customize the color
+                  CupertinoIcons.tag_solid,
+                  size: 30.0,
+                  color: Colors.green, // Change the color to green
                 ),
                 SizedBox(width: 10.0),
-                Text('Scan Your ID Tag Here'),
+                Text(
+                  'Scan Your ID Tag Here',
+                  style: TextStyle(color: Colors.black), // Set text color
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -40,14 +46,16 @@ Future<String?> showInputDialog(BuildContext context) async {
                 },
                 decoration: const InputDecoration(
                   labelText: 'Enter your input',
-                  icon: Icon(Icons.person), // Icon for the input field
+                  icon: Icon(CupertinoIcons
+                      .person_2_square_stack_fill), // Icon for the input field
                 ),
               ),
             ),
-            ElevatedButton(
+            CupertinoButton(
               onPressed: () {
                 Navigator.pop(context, userInput); // Close the dialog
               },
+              color: const Color(0xFF2E8B57),
               child: const Text('OK'),
             ),
             const SizedBox(height: 20),

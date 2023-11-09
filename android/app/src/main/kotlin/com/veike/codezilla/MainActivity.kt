@@ -1,4 +1,4 @@
-package com.veike.codezilla
+package com.veike.guard_tour
 
 import io.flutter.embedding.android.FlutterActivity
 

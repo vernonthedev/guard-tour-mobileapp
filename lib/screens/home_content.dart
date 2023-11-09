@@ -1,4 +1,4 @@
-import 'package:codezilla/screens/patrol.dart';
+import 'package:guard_tour/screens/patrol.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -63,7 +63,7 @@ class _HomePageContentState extends State<HomePageContent> {
               children: const <Widget>[
                 Icon(
                   CupertinoIcons.xmark_shield_fill,
-                  color: CupertinoColors.activeBlue,
+                  color: Color(0xFF2E8B57),
                   size: 24,
                 ),
                 SizedBox(width: 8),

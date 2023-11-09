@@ -7,9 +7,9 @@ import 'profile.dart';
 import 'settings.dart';
 
 class HomePage extends StatefulWidget {
-  final String userInput;
-
-  const HomePage({Key? key, required this.userInput}) : super(key: key);
+  const HomePage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();

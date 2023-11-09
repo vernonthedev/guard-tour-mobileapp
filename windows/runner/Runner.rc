@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.veike" "\0"
-            VALUE "FileDescription", "codezilla" "\0"
+            VALUE "FileDescription", "guard_tour" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "codezilla" "\0"
+            VALUE "InternalName", "guard_tour" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.veike. All rights reserved." "\0"
-            VALUE "OriginalFilename", "codezilla.exe" "\0"
-            VALUE "ProductName", "codezilla" "\0"
+            VALUE "OriginalFilename", "guard_tour.exe" "\0"
+            VALUE "ProductName", "guard_tour" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
