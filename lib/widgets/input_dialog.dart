@@ -3,49 +3,56 @@ import 'package:flutter/material.dart';
 Future<String?> showInputDialog(BuildContext context) async {
   String? userInput;
 
-  return showDialog<String>(
+  return showModalBottomSheet<String>(
     context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
     builder: (BuildContext context) {
-      return AlertDialog(
-        title: Row(
-          children: <Widget>[
-            const Icon(
-              Icons.scanner, // Icon for tag scanning
-              size: 24.0,
-              color: Colors.blue, // Customize the color
-            ),
-            const SizedBox(width: 10.0),
-            const Text('Scan Your ID Tag Here'),
-          ],
+      return Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
         ),
-        content: Column(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            TextField(
-              onChanged: (value) {
-                userInput = value;
-              },
-              decoration: const InputDecoration(
-                labelText: 'Enter your input',
-                icon: Icon(Icons.person), // Icon for the input field
+            const SizedBox(height: 20),
+            Row(
+              children: const <Widget>[
+                Icon(
+                  Icons.scanner, // Icon for tag scanning
+                  size: 24.0,
+                  color: Colors.blue, // Customize the color
+                ),
+                SizedBox(width: 10.0),
+                Text('Scan Your ID Tag Here'),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: TextField(
+                onChanged: (value) {
+                  userInput = value;
+                },
+                decoration: const InputDecoration(
+                  labelText: 'Enter your input',
+                  icon: Icon(Icons.person), // Icon for the input field
+                ),
               ),
             ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, userInput); // Close the dialog
+              },
+              child: const Text('OK'),
+            ),
+            const SizedBox(height: 20),
           ],
         ),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('OK'),
-            onPressed: () {
-              Navigator.of(context).pop(userInput);
-            },
-          ),
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
       );
     },
   );
