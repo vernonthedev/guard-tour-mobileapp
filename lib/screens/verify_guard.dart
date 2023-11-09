@@ -44,7 +44,7 @@ class _verify_guardTagState extends State<verify_guardTag> {
             const Icon(
               CupertinoIcons.tag_circle_fill,
               size: 100,
-              color: Colors.blue,
+              color: Color(0xFF2E8B57),
             ),
             const SizedBox(height: 20),
             const Text(
@@ -63,7 +63,7 @@ class _verify_guardTagState extends State<verify_guardTag> {
                 children: const [
                   Icon(
                     CupertinoIcons.camera,
-                    color: CupertinoColors.activeBlue,
+                    color: Color(0xFF2E8B57),
                   ),
                   SizedBox(width: 10),
                   Text(

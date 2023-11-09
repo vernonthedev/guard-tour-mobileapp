@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
             const Icon(
               CupertinoIcons.xmark_shield_fill,
               size: 100,
-              color: Colors.blue,
+              color: Color(0xFF2E8B57), // Full hex code with 100% opacity
             ),
             const SizedBox(height: 20),
             const Text(
@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
                 autocorrect: false,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  hintText: "Enter Your Site ID here",
+                  hintText: "Enter Your Site ID or Unique ID",
                   prefixIcon: Icon(CupertinoIcons.building_2_fill),
                 ),
               ),
@@ -83,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => verify_guardTag()));
               },
-              color: CupertinoColors.activeBlue,
+              color: const Color(0xFF2E8B57),
               child: const Text("Login"), // Change button color if needed
             ),
           ],
