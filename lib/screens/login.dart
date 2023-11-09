@@ -110,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                 // move to guard verification screen when we return the token from the auth function
                 if (token != null) {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const verify_guardTag()));
+                      builder: (context) => const verifyGuardTag()));
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

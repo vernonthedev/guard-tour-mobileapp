@@ -1,18 +1,25 @@
+// ignore_for_file: camel_case_types
+
+/*
+Project Name: Guard Tour Mobile App
+Developer: vernonthedev
+File Name: home.dart
+*/
 import 'package:guard_tour/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../widgets/input_dialog.dart';
 
-class verify_guardTag extends StatefulWidget {
-  const verify_guardTag({super.key});
+class verifyGuardTag extends StatefulWidget {
+  const verifyGuardTag({super.key});
 
   @override
-  _verify_guardTagState createState() => _verify_guardTagState();
+  _verifyGuardTagState createState() => _verifyGuardTagState();
 }
 
 // ignore: camel_case_types
-class _verify_guardTagState extends State<verify_guardTag> {
+class _verifyGuardTagState extends State<verifyGuardTag> {
   String? userInput;
 
   _showInputDialog(BuildContext context) async {

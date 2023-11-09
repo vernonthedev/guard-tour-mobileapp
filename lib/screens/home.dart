@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   // all the navigation pages
   final List<Widget> _pages = [
     const HomePageContent(),
-    PatrolPage(),
+    const PatrolPage(),
     const ProfilePage(),
     const Settings(),
   ];
