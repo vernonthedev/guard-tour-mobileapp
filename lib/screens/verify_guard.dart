@@ -80,29 +80,6 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
               ),
             ),
             const SizedBox(height: 20),
-            CupertinoButton(
-              onPressed: () {
-                // Verify the tag details
-
-                // Send user to profile page
-                _navigateToDisplayHomeScreen(context);
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Icon(
-                    CupertinoIcons.check_mark_circled,
-                    color: CupertinoColors.activeGreen,
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    'Verify Tag Info',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
             if (userInput != null)
               Card(
                 margin: const EdgeInsets.all(16),
@@ -146,6 +123,52 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
                       subtitle: Text(
                         userInput ?? 'No Tag Id Scanned',
                         style: const TextStyle(fontSize: 24),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    CupertinoButton(
+                      onPressed: () {
+                        // Verify the tag details
+
+                        // Send user to profile page
+                        _navigateToDisplayHomeScreen(context);
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(
+                            CupertinoIcons.check_mark_circled,
+                            color: CupertinoColors.activeGreen,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            'Verify Tag Info',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    CupertinoButton(
+                      onPressed: () {
+                        // Verify the tag details
+
+                        // Send user to profile page
+                        debugPrint("Cancelled Verification Details!");
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(
+                            CupertinoIcons.person_badge_minus,
+                            color: CupertinoColors.destructiveRed,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            'Revoke Details!',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
                       ),
                     ),
                   ],
