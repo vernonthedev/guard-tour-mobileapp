@@ -65,51 +65,53 @@ class SiteProfileTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Card(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    'Site Profile',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Card(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const <Widget>[
+                  Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text(
+                      'Site Profile',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                // TODO: Get the site profile data from the api
-                ListTile(
-                  title: Text('Name of Site'),
-                  subtitle: Text('Your Site Name'),
-                ),
-                ListTile(
-                  title: Text('District'),
-                  subtitle: Text('Your District Name'),
-                ),
-                ListTile(
-                  title: Text('LC1 Zone'),
-                  subtitle: Text('Your LC1 Zone'),
-                ),
-                ListTile(
-                  title: Text('Number of Guards'),
-                  subtitle: Text('12 Guards'),
-                ),
-                ListTile(
-                  title: Text('Total Notifications'),
-                  subtitle: Text('25 Notifications'),
-                ),
-              ],
+                  // TODO: Get the site profile data from the api
+                  ListTile(
+                    title: Text('Name of Site'),
+                    subtitle: Text('Your Site Name'),
+                  ),
+                  ListTile(
+                    title: Text('District'),
+                    subtitle: Text('Your District Name'),
+                  ),
+                  ListTile(
+                    title: Text('LC1 Zone'),
+                    subtitle: Text('Your LC1 Zone'),
+                  ),
+                  ListTile(
+                    title: Text('Number of Guards'),
+                    subtitle: Text('12 Guards'),
+                  ),
+                  ListTile(
+                    title: Text('Total Notifications'),
+                    subtitle: Text('25 Notifications'),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
