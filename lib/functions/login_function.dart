@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // Logging user, by hitting the api endpoint and retrieving the token
 Future<String?> loginUser(String username, String password) async {
   // hit the endpoint using the http package
-  var url = Uri.parse('http://app.legitsystemsug.com:3000/auth/signin');
+  var url = Uri.parse('https://guardtour.legitsystemsug.com/auth/signin');
   try {
     var response = await http.post(
       url,
