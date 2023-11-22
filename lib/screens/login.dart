@@ -97,7 +97,6 @@ class _LoginPageState extends State<LoginPage> {
                 // pick data from the text inputs and assign it to vars
                 final siteID = _siteID.text;
                 final password = _password.text;
-                debugPrint("Site Id is: $siteID and Password is $password");
                 setState(() {
                   _isLoading =
                       true; // Set the loading state to true when authentication starts

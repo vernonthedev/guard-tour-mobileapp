@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'home_content.dart';
-import 'patrol.dart';
 import 'profile.dart';
 import 'settings.dart';
+import 'start_patrol.dart';
 
 // stateful because it handles the switching between the diff
 // bottom navigation sections
@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   // all the navigation pages
   final List<Widget> _pages = [
     const HomePageContent(),
-    const PatrolPage(),
+    const StartPatrolPage(),
     const ProfilePage(),
     const Settings(),
   ];

@@ -187,16 +187,16 @@ class _PatrolPageState extends State<PatrolPage> {
     return SizedBox(
       width: 70,
       child: TextFormField(
+        enabled:
+            !tagScannedStatus[index], // Enable input if the tag is not scanned
         onChanged: (value) {
-          if (value.isNotEmpty) {
+          if (value.isNotEmpty && !tagScannedStatus[index]) {
             bool isTagMatched = siteTags.any((tag) => tag.uid == value);
 
-            // Check if the tag is matched and not already scanned
-            if (isTagMatched && scannedTag == null) {
+            if (isTagMatched) {
               // Update the scanned status and log the time
               setState(() {
                 tagScannedStatus[index] = true;
-                scannedTag = value;
               });
 
               // Keep track of the first and last scanned tags
@@ -217,11 +217,13 @@ class _PatrolPageState extends State<PatrolPage> {
               // Print debug information
               debugPrint(
                   'Tag $value verified. Total verified tags: $totalVerifiedTags');
-            } else if (scannedTag != null) {
-              // Another tag is already scanned
-              debugPrint(
-                  'Another tag is already scanned. Scan only one tag at a time.');
-            } else if (!isTagMatched) {
+
+              // Check if all tags are scanned
+              if (tagScannedStatus.every((scanned) => scanned)) {
+                debugPrint(
+                    'All tags are scanned. You can perform further actions.');
+              }
+            } else {
               // Tag does not match
               debugPrint('Tag $value does not match. Scan another tag.');
             }

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserData {
+  int guardId;
   String username;
   String firstName;
   int companyId;
@@ -11,6 +12,7 @@ class UserData {
   int exp;
 
   UserData({
+    required this.guardId,
     required this.username,
     required this.firstName,
     required this.companyId,
@@ -46,8 +48,10 @@ UserData decodeToken(String token) {
 
   // Parse the JSON payload
   Map<String, dynamic> payload = json.decode(decodedPayload);
+  print(payload);
 
   // Extract the required fields
+  int guardId = payload['sub'];
   String username = payload['username'];
   String firstName = payload['firstName'];
   int companyId = payload['companyId'];
@@ -58,6 +62,7 @@ UserData decodeToken(String token) {
 
   // Create and return UserData object
   return UserData(
+    guardId: guardId,
     username: username,
     firstName: firstName,
     companyId: companyId,
