@@ -236,7 +236,7 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
                             SnackBar(
                               content: Text(
                                   'Welcome to Guard Tour ${userData!.firstName}'),
-                              backgroundColor: Colors.red,
+                              backgroundColor: Colors.green,
                               duration: const Duration(
                                   seconds:
                                       2), // You can adjust the duration as needed

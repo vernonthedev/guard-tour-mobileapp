@@ -1,3 +1,9 @@
+/*
+Project Name: Guard Tour Mobile App
+Developer: vernonthedev
+File Name: profile.dart
+*/
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
@@ -192,17 +198,6 @@ class SiteProfileTab extends StatelessWidget {
       String patrolPlan = prefs.getString('patrolPlanType') ?? 'patrol plan';
       int companyId = prefs.getInt('companyId') ?? 0;
 
-      // Print retrieved values for debugging
-      print('Site Id: $siteId');
-      print('Site Name: $siteName');
-      print('Latitude: $siteLatitude');
-      print('Longitude: $siteLongitude');
-      print('Phone No: $sitePhoneNumber');
-      print('Supervisor: $supervisorName');
-      print('supervisor phone number: $supervisorPhoneNumber');
-      print('Patrol Plan: $patrolPlan');
-      print('Company Id: $companyId');
-
       // Return the retrieved values as a map
       return {
         'siteId': siteId,
@@ -216,7 +211,7 @@ class SiteProfileTab extends StatelessWidget {
         'companyId': companyId,
       };
     } catch (e) {
-      print('Error retrieving site details: $e');
+      debugPrint('ERROR! retrieving site details: $e');
       // Handle any exceptions that occur during the process
       return {}; // Return an empty map in case of an error
     }
