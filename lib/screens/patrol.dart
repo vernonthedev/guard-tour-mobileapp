@@ -1,35 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
-
-class Tag {
-  final int id;
-  final String uid;
-  final int siteId;
-
-  Tag({
-    required this.id,
-    required this.uid,
-    required this.siteId,
-  });
-
-  factory Tag.fromJson(Map<String, dynamic> json) {
-    return Tag(
-      id: json['id'],
-      uid: json['uid'],
-      siteId: json['siteId'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'uid': uid,
-      'siteId': siteId,
-    };
-  }
-}
+import 'package:guard_tour/functions/decode_token.dart';
+import '../functions/get_site_tags.dart';
 
 class PatrolPage extends StatefulWidget {
   const PatrolPage({Key? key}) : super(key: key);
@@ -39,6 +11,9 @@ class PatrolPage extends StatefulWidget {
 }
 
 class _PatrolPageState extends State<PatrolPage> {
+  UserData? userData;
+  int? guardId;
+
   String? firstScannedTag;
   String? lastScannedTag;
   int totalVerifiedTags = 0;
@@ -49,42 +24,70 @@ class _PatrolPageState extends State<PatrolPage> {
 
   late List<bool> tagScannedStatus;
   List<Tag> siteTags = []; // Initialize as an empty list
+  late PatrolPlan patrolPlan; // Define patrolPlan variable
+
+  // Define the set to keep track of scanned tags
+  Set<String> _scannedTags = Set<String>();
 
   @override
   void initState() {
     super.initState();
     tagScannedStatus = <bool>[]; // Initialize as an empty list
-    _loadTags();
+    _initUserData(); // Call the function to initialize userData
   }
 
-  Future<void> _loadTags() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? tagStrings = prefs.getStringList('siteTags');
-
-    if (tagStrings != null) {
-      List<Tag> loadedTags = tagStrings.map((tagString) {
-        Map<String, dynamic> tagMap = json.decode(tagString);
-        return Tag.fromJson(tagMap);
-      }).toList();
-
-      setState(() {
-        siteTags = loadedTags;
-        tagScannedStatus = List.generate(siteTags.length, (index) => false);
-      });
+  Future<void> _initUserData() async {
+    // Initialize userData
+    userData = await decodeTokenFromSharedPreferences();
+    if (userData != null) {
+      // If userData is not null, proceed to load the patrol plan
+      print('Initialized userData: $userData');
+      await _loadPatrolPlan(); // Await _loadPatrolPlan after initializing userData
+      setState(() {}); // Trigger a rebuild to reflect the changes
     } else {
-      setState(() {
-        siteTags = [];
-      });
+      // Handle the case where userData is null
+      print('Failed to initialize userData.');
+    }
+  }
+
+  Future<void> _loadPatrolPlan() async {
+    print("============RUNNING============");
+    // get the guard id from the decoded token
+    if (userData != null) {
+      guardId = userData?.guardId;
+      print("Loaded guardid");
+
+      if (guardId != null) {
+        // Fetch the patrol plan using the guard ID
+        PatrolPlan? fetchedPlan = await fetchPatrolPlan(guardId ?? 0);
+
+        if (fetchedPlan != null) {
+          print('Fetched Plan: $fetchedPlan');
+          setState(() {
+            patrolPlan = fetchedPlan;
+            tagScannedStatus =
+                List.generate(patrolPlan.tags.length, (index) => false);
+            siteTags = patrolPlan.tags; // Update siteTags with fetched data
+          });
+        } else {
+          // Handle the case where fetching patrol plan failed
+          print('Failed to load patrol plan.');
+        }
+      } else {
+        print("Token is null");
+      }
+    } else {
+      print("Token is empty and not found");
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Check if siteTags is null or empty before accessing it
     if (siteTags.isEmpty) {
-      return const Center(
-          child: CircularProgressIndicator()); // or any other loading indicator
+      // Display loading indicator while tags are being loaded
+      return const Center(child: CircularProgressIndicator());
     } else {
+      // Display the content once tags are loaded
       return Scaffold(
         body: Column(
           children: <Widget>[
@@ -193,10 +196,13 @@ class _PatrolPageState extends State<PatrolPage> {
           if (value.isNotEmpty && !tagScannedStatus[index]) {
             bool isTagMatched = siteTags.any((tag) => tag.uid == value);
 
-            if (isTagMatched) {
+            // Check if the tag UID has already been scanned
+            if (isTagMatched && !_scannedTags.contains(value)) {
               // Update the scanned status and log the time
               setState(() {
                 tagScannedStatus[index] = true;
+                _scannedTags
+                    .add(value); // Add the UID to the set of scanned tags
               });
 
               // Keep track of the first and last scanned tags
@@ -223,9 +229,13 @@ class _PatrolPageState extends State<PatrolPage> {
                 debugPrint(
                     'All tags are scanned. You can perform further actions.');
               }
-            } else {
+            } else if (!isTagMatched) {
               // Tag does not match
               debugPrint('Tag $value does not match. Scan another tag.');
+            } else {
+              // Tag UID has already been scanned
+              debugPrint(
+                  'Tag $value has already been scanned. Scan another tag.');
             }
           }
         },
