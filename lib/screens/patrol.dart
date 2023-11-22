@@ -39,6 +39,14 @@ class PatrolPage extends StatefulWidget {
 }
 
 class _PatrolPageState extends State<PatrolPage> {
+  String? firstScannedTag;
+  String? lastScannedTag;
+  int totalVerifiedTags = 0;
+  DateTime? firstScannedTime;
+  DateTime? lastScannedTime;
+
+  String? scannedTag;
+
   late List<bool> tagScannedStatus;
   List<Tag> siteTags = []; // Initialize as an empty list
 
@@ -181,9 +189,42 @@ class _PatrolPageState extends State<PatrolPage> {
       child: TextFormField(
         onChanged: (value) {
           if (value.isNotEmpty) {
-            setState(() {
-              tagScannedStatus[index] = true;
-            });
+            bool isTagMatched = siteTags.any((tag) => tag.uid == value);
+
+            // Check if the tag is matched and not already scanned
+            if (isTagMatched && scannedTag == null) {
+              // Update the scanned status and log the time
+              setState(() {
+                tagScannedStatus[index] = true;
+                scannedTag = value;
+              });
+
+              // Keep track of the first and last scanned tags
+              if (firstScannedTag == null) {
+                firstScannedTag = value;
+                firstScannedTime = DateTime.now();
+                debugPrint('Time of first tag scanned: $firstScannedTime');
+              }
+              lastScannedTag = value;
+              lastScannedTime = DateTime.now();
+
+              // Increment the total number of verified tags
+              totalVerifiedTags++;
+
+              // Log the time of the last scanned tag
+              debugPrint('Time of last tag scanned: $lastScannedTime');
+
+              // Print debug information
+              debugPrint(
+                  'Tag $value verified. Total verified tags: $totalVerifiedTags');
+            } else if (scannedTag != null) {
+              // Another tag is already scanned
+              debugPrint(
+                  'Another tag is already scanned. Scan only one tag at a time.');
+            } else if (!isTagMatched) {
+              // Tag does not match
+              debugPrint('Tag $value does not match. Scan another tag.');
+            }
           }
         },
         decoration: InputDecoration(
