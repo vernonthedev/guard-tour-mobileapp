@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:guard_tour/functions/decode_token.dart';
 import 'package:guard_tour/functions/get_site_tags.dart';
+import 'package:guard_tour/functions/upload_patrol.dart';
+import 'package:guard_tour/screens/home.dart';
+import 'package:intl/intl.dart';
 
 class PatrolPage extends StatefulWidget {
   const PatrolPage({Key? key}) : super(key: key);
@@ -111,7 +114,7 @@ class _PatrolPageState extends State<PatrolPage> {
               child: ListView.builder(
                 itemCount: siteTags.length,
                 itemBuilder: (context, index) {
-                  final siteTag = siteTags[index].uid;
+                  final siteTag = "Scan Tag Here";
                   final isScanned = tagScannedStatus[index];
 
                   return GestureDetector(
@@ -144,7 +147,6 @@ class _PatrolPageState extends State<PatrolPage> {
                 onPressed: () async {
                   //TODO: Post archive details
                   _showArchiveDialog();
-                  Navigator.of(context).pushReplacementNamed('/home');
                 },
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -155,7 +157,7 @@ class _PatrolPageState extends State<PatrolPage> {
                     ),
                     SizedBox(width: 10),
                     Text(
-                      'Archive Patrol',
+                      'Upload Patrol',
                       style: TextStyle(
                         fontSize: 16,
                         color: CupertinoColors.activeGreen,
@@ -260,23 +262,62 @@ class _PatrolPageState extends State<PatrolPage> {
     );
   }
 
-  void _showArchiveDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Patrol Session Archived'),
-          content: Text('The patrol session has been successfully archived.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
+  void _showArchiveDialog() async {
+    // Ensure that at least one tag has been scanned
+    if (_scannedTags.isNotEmpty) {
+      // Use the date when the first scan was made
+      String date = DateFormat("yyyy-MM-dd").format(firstScannedTime!);
+
+      // Format the startTime and endTime
+      String startTime = DateFormat("HH:mm").format(firstScannedTime!);
+      String endTime = DateFormat("HH:mm").format(lastScannedTime!);
+
+      // Call the function to make the POST request
+      await postData(
+        date,
+        startTime,
+        endTime,
+        guardId ?? 0,
+      );
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Patrol Uploaded Successfully'),
+            content: const Text(
+                'The patrol session has been successfully archived.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const HomePage()));
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      // Display a message if no tags have been scanned
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: const Text('No tags have been scanned.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }

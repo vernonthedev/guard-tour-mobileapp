@@ -27,14 +27,14 @@ class _HomePageContentState extends State<HomePageContent> {
     {
       'date': '2023-01-15',
       'time': '08:00 AM',
-      'guardName': 'John Doe',
+      'guardName': 'Vernon',
       'uploadStatus': 'Completed',
       'shift': 'Day',
     },
     {
       'date': '2023-01-16',
       'time': '09:30 AM',
-      'guardName': 'Jane Smith',
+      'guardName': 'Vernon',
       'uploadStatus': 'Pending',
       'shift': 'Night',
     },
