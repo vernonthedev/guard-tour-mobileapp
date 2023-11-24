@@ -39,7 +39,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
       if (_selectedTabIndex == 0) {
         // Fetch site data when the "Profile" tab is selected
-        int? siteId; // Declare siteId outside the if statement
+        int? siteId;
+        userData = await decodeTokenFromSharedPreferences();
         if (userData != null) {
           siteId = userData?.deployedSiteId;
 
@@ -48,13 +49,13 @@ class _ProfilePageState extends State<ProfilePage> {
           // Fetch site data when the "Profile" tab is selected
           await fetchDataAndStoreInSharedPreferences(siteId ?? 0);
 
-          // Ensure the user data is updated after fetching
-          userData = await decodeTokenFromSharedPreferences();
-
           if (userData == null) {
             print("DATA NOT FOUND!");
           } else {
             print("UserData loaded successfully: $userData");
+
+            // Update the _SiteProfileTabState by triggering a rebuild
+            (_tabPages[_selectedTabIndex] as _ProfilePageState).setState(() {});
           }
         } else {
           print("DATA NOT FOUND!");
