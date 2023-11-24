@@ -10,7 +10,7 @@ import 'screens/home.dart';
 import 'screens/login.dart';
 
 // Main starter function for the whole application
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 

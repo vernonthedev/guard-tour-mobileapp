@@ -86,6 +86,7 @@ Future<void> fetchDataAndStoreInSharedPreferences(int siteId) async {
     String? token = await _getToken();
 
     if (token != null) {
+      print(siteId);
       // Define the API endpoint
       String apiUrl = 'https://guardtour.legitsystemsug.com/sites/$siteId';
 

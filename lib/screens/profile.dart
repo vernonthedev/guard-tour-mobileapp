@@ -20,7 +20,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   UserData? userData;
 
-  late Future<void> _fetchSiteData =
+  late final Future<void> _fetchSiteData =
       Future.value(); // Initialize with a completed future
   int _selectedTabIndex = 0; // Index of the selected tab
 
@@ -31,23 +31,35 @@ class _ProfilePageState extends State<ProfilePage> {
     const ShiftTab(shift: 'Day Shift'),
   ];
 
-  // change state depending on which tab has been selected
-  void _onTabTapped(int index) {
-    setState(() {
-      _selectedTabIndex = index;
-    });
+  void _onTabTapped(int index) async {
+    if (_selectedTabIndex != index) {
+      setState(() {
+        _selectedTabIndex = index;
+      });
 
-    if (_selectedTabIndex == 0) {
-      int? siteId; // Declare siteId outside the if statement
+      if (_selectedTabIndex == 0) {
+        // Fetch site data when the "Profile" tab is selected
+        int? siteId; // Declare siteId outside the if statement
+        if (userData != null) {
+          siteId = userData?.deployedSiteId;
 
-      if (userData != null) {
-        siteId = userData?.deployedSiteId;
+          print('Site ID from userData: $siteId');
+
+          // Fetch site data when the "Profile" tab is selected
+          await fetchDataAndStoreInSharedPreferences(siteId ?? 0);
+
+          // Ensure the user data is updated after fetching
+          userData = await decodeTokenFromSharedPreferences();
+
+          if (userData == null) {
+            print("DATA NOT FOUND!");
+          } else {
+            print("UserData loaded successfully: $userData");
+          }
+        } else {
+          print("DATA NOT FOUND!");
+        }
       }
-
-      // Fetch site data when the "Profile" tab is selected
-      _fetchSiteData = fetchDataAndStoreInSharedPreferences(
-        siteId ?? 0,
-      );
     }
   }
 

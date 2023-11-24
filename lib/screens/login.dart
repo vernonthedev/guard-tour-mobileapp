@@ -9,7 +9,6 @@ import 'verify_guard.dart';
 import 'package:flutter/cupertino.dart';
 import '../functions/login_function.dart';
 
-// stful b'coz we are going to be checking for token availability state
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -18,13 +17,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // circular progress indicator state
   bool _isLoading = false;
-  // set controllers to handle the way retrieve data from the inputs
   late final TextEditingController _siteID;
   late final TextEditingController _password;
+  bool _isPasswordVisible = false;
 
-  // initialise the controllers
   @override
   void initState() {
     _siteID = TextEditingController();
@@ -32,7 +29,6 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
-  // always dispose the state that we create
   @override
   void dispose() {
     _siteID.dispose();
@@ -50,18 +46,16 @@ class _LoginPageState extends State<LoginPage> {
             const Icon(
               CupertinoIcons.xmark_shield_fill,
               size: 100,
-              color: Color(0xFF2E8B57), // Full hex code with 100% opacity
+              color: Color(0xFF2E8B57),
             ),
             const SizedBox(height: 20),
-            // HEADING
             const Text(
               "Login to Guard Tour System!",
               style: TextStyle(
-                fontSize: 20, // Adjust the font size as needed
+                fontSize: 20,
               ),
             ),
             const SizedBox(height: 20),
-            // USERNAME INPUT BOX WIDGET
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextField(
@@ -76,37 +70,43 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 20),
-            // PASSWORD INPUT BOX WIDGET
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextField(
                 controller: _password,
-                obscureText: true,
+                obscureText: !_isPasswordVisible,
                 enableSuggestions: false,
                 autocorrect: false,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: "Enter Password",
                   prefixIcon: Icon(CupertinoIcons.lock_shield_fill),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? CupertinoIcons.eye_slash_fill
+                          : CupertinoIcons.eye_fill,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            // LOGIN SUBMIT BUTTON
             CupertinoButton(
               onPressed: () async {
-                // pick data from the text inputs and assign it to vars
                 final siteID = _siteID.text;
                 final password = _password.text;
                 setState(() {
-                  _isLoading =
-                      true; // Set the loading state to true when authentication starts
+                  _isLoading = true;
                 });
                 String? token = await loginUser(siteID, password);
                 setState(() {
-                  _isLoading =
-                      false; // Set the loading state to false once authentication is complete
+                  _isLoading = false;
                 });
-                // move to guard verification screen when we return the token from the auth function
                 if (token != null) {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => const verifyGuardTag()));
@@ -116,16 +116,14 @@ class _LoginPageState extends State<LoginPage> {
                       content: Text(
                           'Login Failed! Please Enter Correct Credentials'),
                       backgroundColor: Colors.red,
-                      duration: Duration(
-                          seconds: 2), // You can adjust the duration as needed
+                      duration: Duration(seconds: 2),
                     ),
                   );
                 }
               },
               color: const Color(0xFF2E8B57),
-              child: const Text("Login"), // Change button color if needed
+              child: const Text("Login"),
             ),
-            // DISPLAY THE CIRCULAR PROGRESS FOR THE LOGIN REQUESTS
             if (_isLoading)
               const Center(
                 child: CircularProgressIndicator(),

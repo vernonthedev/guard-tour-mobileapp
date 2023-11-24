@@ -24,13 +24,25 @@ class UserData {
 }
 
 Future<UserData?> decodeTokenFromSharedPreferences() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('token');
-
   try {
-    return decodeToken(token!);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    if (token != null) {
+      print('Retrieved token: $token');
+
+      try {
+        return decodeToken(token);
+      } catch (e) {
+        print('Error decoding token: $e');
+        return null;
+      }
+    } else {
+      print('Token is null. Unable to decode.');
+      return null;
+    }
   } catch (e) {
-    print('Error decoding token: $e');
+    print('Error retrieving SharedPreferences: $e');
     return null;
   }
 }
@@ -48,7 +60,7 @@ UserData decodeToken(String token) {
 
   // Parse the JSON payload
   Map<String, dynamic> payload = json.decode(decodedPayload);
-  print(payload);
+  print('Decoded payload: $payload');
 
   // Extract the required fields
   int guardId = payload['sub'];
