@@ -18,6 +18,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  // Use GlobalKey to access the state of SiteProfileTab
+  final GlobalKey<_SiteProfileTabState> _siteProfileTabKey =
+      GlobalKey<_SiteProfileTabState>();
+
   UserData? userData;
 
   late final Future<void> _fetchSiteData =
@@ -53,6 +57,8 @@ class _ProfilePageState extends State<ProfilePage> {
             print("DATA NOT FOUND!");
           } else {
             print("UserData loaded successfully: $userData");
+            // Update the SiteProfileTab state using the GlobalKey
+            _siteProfileTabKey.currentState?.updateState();
 
             // Update the _SiteProfileTabState by triggering a rebuild
             (_tabPages[_selectedTabIndex] as _ProfilePageState).setState(() {});
@@ -116,8 +122,19 @@ class _ProfilePageState extends State<ProfilePage> {
 
 // the site profile widget that displays all about the site where the
 // deployed logged in
-class SiteProfileTab extends StatelessWidget {
+class SiteProfileTab extends StatefulWidget {
   const SiteProfileTab({Key? key}) : super(key: key);
+
+  @override
+  State<SiteProfileTab> createState() => _SiteProfileTabState();
+}
+
+class _SiteProfileTabState extends State<SiteProfileTab> {
+  // Function to update the state of SiteProfileTab
+  void updateState() {
+    // Trigger a rebuild of the widget
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {

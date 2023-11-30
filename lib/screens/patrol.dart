@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:guard_tour/functions/decode_token.dart';
 import 'package:guard_tour/functions/get_site_tags.dart';
 import 'package:guard_tour/functions/upload_patrol.dart';
+import 'package:guard_tour/models/boxes.dart';
+import 'package:guard_tour/models/patrol_model.dart';
 import 'package:guard_tour/screens/home.dart';
 import 'package:intl/intl.dart';
 
@@ -145,8 +147,7 @@ class _PatrolPageState extends State<PatrolPage> {
               alignment: Alignment.center,
               child: CupertinoButton(
                 onPressed: () async {
-                  //TODO: Post archive details
-                  _showArchiveDialog();
+                  //TODO:
                 },
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -168,6 +169,27 @@ class _PatrolPageState extends State<PatrolPage> {
               ),
             ),
           ],
+        ),
+        floatingActionButton: CupertinoButton(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Icon(
+                CupertinoIcons.cloud_download_fill,
+                color: CupertinoColors.systemRed,
+              ),
+              SizedBox(width: 10),
+              Text(
+                'Archive',
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+          onPressed: () {
+            //TODO: Save the made patrol to db
+            _showArchiveDialog();
+            print("Patrol has been archived");
+          },
         ),
       );
     }
@@ -262,7 +284,7 @@ class _PatrolPageState extends State<PatrolPage> {
     );
   }
 
-  void _showArchiveDialog() async {
+  void uploadPatrol() async {
     // Ensure that at least one tag has been scanned
     if (_scannedTags.isNotEmpty) {
       // Use the date when the first scan was made
@@ -285,6 +307,67 @@ class _PatrolPageState extends State<PatrolPage> {
         builder: (context) {
           return AlertDialog(
             title: const Text('Patrol Uploaded Successfully'),
+            content:
+                const Text('The patrol session has been successfully uploaded'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const HomePage()));
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      // Display a message if no tags have been scanned
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content:
+                const Text('No tags have been scanned Patrol was no Uploaded'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  void _showArchiveDialog() async {
+    // Ensure that at least one tag has been scanned
+    if (_scannedTags.isNotEmpty) {
+      // Use the date when the first scan was made
+      String date = DateFormat("yyyy-MM-dd").format(firstScannedTime!);
+
+      // Format the startTime and endTime
+      String startTime = DateFormat("HH:mm").format(firstScannedTime!);
+      String endTime = DateFormat("HH:mm").format(lastScannedTime!);
+
+      // Archive the patrol session in Hive
+      await archivePatrol(
+        userData?.firstName,
+        guardId,
+        startTime,
+        endTime,
+        patrolPlan.shiftId,
+      );
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Patrol Archived Successfully'),
             content: const Text(
                 'The patrol session has been successfully archived.'),
             actions: <Widget>[
@@ -306,7 +389,8 @@ class _PatrolPageState extends State<PatrolPage> {
         builder: (context) {
           return AlertDialog(
             title: const Text('Error'),
-            content: const Text('No tags have been scanned.'),
+            content: const Text(
+                'No tags have been scanned. And No Archiving Took Place'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -319,5 +403,17 @@ class _PatrolPageState extends State<PatrolPage> {
         },
       );
     }
+  }
+
+  Future archivePatrol(guardName, guardId, startTime, endTime, shiftId) async {
+    final patrol = Patrol()
+      ..guardName = guardName
+      ..guardId = guardId
+      ..scannedDate = DateTime.now()
+      ..startTime = startTime
+      ..endTime = endTime
+      ..shiftId = shiftId;
+    final box = Boxes.getPatrols();
+    box.add(patrol);
   }
 }

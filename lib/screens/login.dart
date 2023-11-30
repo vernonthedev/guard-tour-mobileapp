@@ -5,6 +5,7 @@ File Name: home.dart
 */
 
 import 'package:flutter/material.dart';
+import 'package:guard_tour/screens/home.dart';
 import 'verify_guard.dart';
 import 'package:flutter/cupertino.dart';
 import '../functions/login_function.dart';
@@ -109,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                 });
                 if (token != null) {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const verifyGuardTag()));
+                      builder: (context) => const HomePage()));
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

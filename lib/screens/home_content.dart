@@ -7,6 +7,9 @@ File Name: home_content.dart
 import 'package:guard_tour/screens/patrol.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+import '../models/patrol_model.dart';
 
 // its stateful bcoz of the over changing list of filtered and unfiltered patrol data
 class HomePageContent extends StatefulWidget {
@@ -17,28 +20,11 @@ class HomePageContent extends StatefulWidget {
 }
 
 class _HomePageContentState extends State<HomePageContent> {
+  late List<Patrol> patrols;
   // choosing the display all the night shift patrols or day shift
   bool isNightShift = false;
   // setting the search input
   TextEditingController searchController = TextEditingController();
-  // The list of patrols to be displayed, though this data comes from the api
-  List<Map<String, dynamic>> patrols = [
-    // TODO: Get this list of patrol data from the api
-    {
-      'date': '2023-01-15',
-      'time': '08:00 AM',
-      'guardName': 'Vernon',
-      'uploadStatus': 'Completed',
-      'shift': 'Day',
-    },
-    {
-      'date': '2023-01-16',
-      'time': '09:30 AM',
-      'guardName': 'Vernon',
-      'uploadStatus': 'Pending',
-      'shift': 'Night',
-    },
-  ];
 
   // A list of the filtered patrols from the api endpoint
   // they come already filtered
@@ -49,21 +35,30 @@ class _HomePageContentState extends State<HomePageContent> {
   @override
   void initState() {
     super.initState();
-    filteredPatrols = List.from(patrols);
+    _loadPatrolsFromHive();
   }
 
-  // function to search the patrols by guard name
-  void filterPatrols() {
-    String query = searchController.text.toLowerCase();
-    // now we update the state to display all the patrols with the searched guard name
-    // and we convert the data string map to list
-    setState(() {
-      filteredPatrols = patrols
-          .where((patrol) =>
-              patrol['guardName'].toLowerCase().contains(query) &&
-              (isNightShift ? patrol['shift'] == 'Night' : true))
-          .toList();
-    });
+  Future<void> _loadPatrolsFromHive() async {
+    // Open the Hive box for patrols
+    final box = await Hive.openBox<Patrol>('patrols');
+
+    // Load patrols from Hive box
+    patrols = box.values.toList();
+
+    // Sort patrols by date
+    patrols.sort((a, b) => b.scannedDate.compareTo(a.scannedDate));
+
+    setState(() {}); // Trigger a rebuild with the loaded patrols
+  }
+
+  @override
+  void dispose() {
+    // Close off the box opened for the patrols so that we save on memory in our application
+    var patrolBox = Hive.box('patrols');
+    if (patrolBox.isOpen) {
+      patrolBox.close();
+    }
+    super.dispose();
   }
 
   @override
@@ -104,8 +99,7 @@ class _HomePageContentState extends State<HomePageContent> {
                 placeholder: 'Search by Guard Name',
                 onChanged: (query) {
                   // when we start entering the search text, then do
-                  // a live search
-                  filterPatrols();
+                  //TODO: a live search
                 },
                 prefix: const Icon(CupertinoIcons.search),
               ),
@@ -128,7 +122,7 @@ class _HomePageContentState extends State<HomePageContent> {
                       // filter and display the required night or day shift data
                       // depending on the switch value
                       isNightShift = value;
-                      filterPatrols();
+                      //TODO: lIVESEARCH HERE
                     });
                   },
                 ),
@@ -138,27 +132,28 @@ class _HomePageContentState extends State<HomePageContent> {
           // THE LIST WIDGET DISPLAYING THE PATROL DATA
           Expanded(
             child: ListView.builder(
-              itemCount: filteredPatrols.length,
+              itemCount: patrols.length,
               itemBuilder: (context, index) {
-                final patrol = filteredPatrols[index];
+                final patrol = patrols[index];
                 return ListTile(
-                  title: Text('Guard Name: ${patrol['guardName']}'),
+                  title: Text('Guard Name: ${patrol.guardName}'),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Date: ${patrol['date']}'),
-                      Text('Time: ${patrol['time']}'),
-                      Text('Upload Status: ${patrol['uploadStatus']}'),
+                      Text(
+                          'Date: ${patrol.scannedDate.toString()}'), // Update this based on your Patrol model
+                      Text('Time: ${patrol.startTime} - ${patrol.endTime}'),
+                      // Text('Upload Status: ${patrol.uploadStatus}'),
                     ],
                   ),
-                  trailing: Icon(
-                    patrol['uploadStatus'] == 'Completed'
-                        ? CupertinoIcons.check_mark_circled
-                        : CupertinoIcons.hourglass,
-                    color: patrol['uploadStatus'] == 'Completed'
-                        ? CupertinoColors.activeGreen
-                        : CupertinoColors.systemYellow,
-                  ),
+                  // trailing: Icon(
+                  //   patrol.uploadStatus == 'Completed'
+                  //       ? CupertinoIcons.check_mark_circled
+                  //       : CupertinoIcons.hourglass,
+                  //   color: patrol.uploadStatus == 'Completed'
+                  //       ? CupertinoColors.activeGreen
+                  //       : CupertinoColors.systemYellow,
+                  // ),
                 );
               },
             ),
