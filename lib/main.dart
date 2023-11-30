@@ -6,7 +6,7 @@ File Name: main.dart
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'models/patrol_model.dart';
+import 'models/boxes.dart';
 import 'screens/home.dart';
 import 'screens/login.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -15,10 +15,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 void main() async {
   // initialise the hive database
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
-  // register the adapter
-  Hive.registerAdapter(PatrolAdapter());
-  await Hive.openBox<Patrol>('patrols');
+  await Boxes.init(); // Initialize Hive
   // run the application after the db initialization
   runApp(const MyApp());
 }

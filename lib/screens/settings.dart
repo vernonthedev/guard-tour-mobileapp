@@ -7,6 +7,7 @@ File Name: settings.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/boxes.dart';
 import 'login.dart';
 
 // stless bcoz it only contains a list of tiles, doing minimalistic state changing functions
@@ -32,10 +33,19 @@ class Settings extends StatelessWidget {
             width: 20,
           ),
           ListTile(
-            leading: const Icon(CupertinoIcons.archivebox_fill),
-            title: const Text('View Archived Patrols'),
+            leading: const Icon(CupertinoIcons.delete_solid),
+            title: const Text('Delete All Archived Patrols'),
             onTap: () {
-              //TODO: Navigate to view archived patrols page action
+              // Call the function to delete all patrols
+              Boxes.deleteAllPatrols();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('All Archived Patrols Deleted Successfully'),
+                  backgroundColor: Colors.yellow,
+                  duration: Duration(
+                      seconds: 2), // You can adjust the duration as needed
+                ),
+              );
             },
           ),
           const Divider(),

@@ -147,7 +147,9 @@ class _PatrolPageState extends State<PatrolPage> {
               alignment: Alignment.center,
               child: CupertinoButton(
                 onPressed: () async {
-                  //TODO:
+                  //upload the patrol from here
+                  uploadPatrol();
+                  print("Patrol has been uploaded");
                 },
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -295,32 +297,42 @@ class _PatrolPageState extends State<PatrolPage> {
       String endTime = DateFormat("HH:mm").format(lastScannedTime!);
 
       // Call the function to make the POST request
-      await postData(
+      String message = await postData(
         date,
         startTime,
         endTime,
         guardId ?? 0,
       );
 
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Patrol Uploaded Successfully'),
-            content:
-                const Text('The patrol session has been successfully uploaded'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const HomePage()));
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
+      // Display message using SnackBar if widget is still mounted
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+
+      // Archive the patrol session in Hive
+      await archivePatrol(
+        userData?.firstName,
+        guardId,
+        startTime,
+        endTime,
+        patrolPlan.shiftId,
       );
+
+      // Wait for SnackBar to complete before navigating
+      await Future.delayed(const Duration(seconds: 5));
+
+      // Navigate to the home screen if widget is still mounted
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      }
     } else {
       // Display a message if no tags have been scanned
       showDialog(
@@ -328,8 +340,8 @@ class _PatrolPageState extends State<PatrolPage> {
         builder: (context) {
           return AlertDialog(
             title: const Text('Error'),
-            content:
-                const Text('No tags have been scanned Patrol was no Uploaded'),
+            content: const Text(
+                'No tags have been scanned. Patrol was not uploaded.'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -413,7 +425,7 @@ class _PatrolPageState extends State<PatrolPage> {
       ..startTime = startTime
       ..endTime = endTime
       ..shiftId = shiftId;
-    final box = Boxes.getPatrols();
+    final box = Boxes.getPatrols;
     box.add(patrol);
   }
 }

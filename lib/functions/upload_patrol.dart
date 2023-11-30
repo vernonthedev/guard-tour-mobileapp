@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> postData(
+Future<String> postData(
     String date, String startTime, String endTime, int securityGuardId) async {
   final url = 'https://guardtour.legitsystemsug.com/patrols';
 
@@ -11,8 +11,7 @@ Future<void> postData(
 
   // Check if authToken is available
   if (authToken == null || authToken.isEmpty) {
-    print('Failed to retrieve authentication token. Aborting post request.');
-    return;
+    return 'Failed to retrieve authentication token. Aborting post request.';
   }
 
   // Your JSON payload
@@ -37,14 +36,16 @@ Future<void> postData(
     );
 
     if (response.statusCode == 200) {
-      print('Post request successful');
-      print('Response: ${response.body}');
+      return 'Post request successful';
     } else {
-      print('Post request failed with status ${response.statusCode}');
-      print('Response: ${response.body}');
+      // Parse the error message from the response
+      Map<String, dynamic> errorResponse = jsonDecode(response.body);
+      String errorMessage = errorResponse['message'] ?? 'Unknown error';
+
+      return 'Post request failed with status ${response.statusCode}: $errorMessage';
     }
   } catch (e) {
-    print('Error making post request: $e');
+    return 'Error making post request: $e';
   }
 }
 

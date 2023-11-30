@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../models/boxes.dart';
 import '../models/patrol_model.dart';
 
 // its stateful bcoz of the over changing list of filtered and unfiltered patrol data
@@ -26,11 +27,6 @@ class _HomePageContentState extends State<HomePageContent> {
   // setting the search input
   TextEditingController searchController = TextEditingController();
 
-  // A list of the filtered patrols from the api endpoint
-  // they come already filtered
-  // TODO: Get the filtered patrol data and insert it in this list
-  List<Map<String, dynamic>> filteredPatrols = [];
-
 // initialising the night shift and day shift state
   @override
   void initState() {
@@ -39,11 +35,8 @@ class _HomePageContentState extends State<HomePageContent> {
   }
 
   Future<void> _loadPatrolsFromHive() async {
-    // Open the Hive box for patrols
-    final box = await Hive.openBox<Patrol>('patrols');
-
     // Load patrols from Hive box
-    patrols = box.values.toList();
+    patrols = Boxes.getPatrols.values.toList();
 
     // Sort patrols by date
     patrols.sort((a, b) => b.scannedDate.compareTo(a.scannedDate));
@@ -63,6 +56,11 @@ class _HomePageContentState extends State<HomePageContent> {
 
   @override
   Widget build(BuildContext context) {
+    if (patrols == null) {
+      // Handle the case where patrols is not yet initialized
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Scaffold(
       body: Column(
         children: [
@@ -146,14 +144,10 @@ class _HomePageContentState extends State<HomePageContent> {
                       // Text('Upload Status: ${patrol.uploadStatus}'),
                     ],
                   ),
-                  // trailing: Icon(
-                  //   patrol.uploadStatus == 'Completed'
-                  //       ? CupertinoIcons.check_mark_circled
-                  //       : CupertinoIcons.hourglass,
-                  //   color: patrol.uploadStatus == 'Completed'
-                  //       ? CupertinoColors.activeGreen
-                  //       : CupertinoColors.systemYellow,
-                  // ),
+                  trailing: const Icon(
+                    CupertinoIcons.hourglass,
+                    color: CupertinoColors.systemYellow,
+                  ),
                 );
               },
             ),
