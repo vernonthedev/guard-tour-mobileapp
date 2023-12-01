@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<String> postData(
     String date, String startTime, String endTime, int securityGuardId) async {
-  final url = 'https://guardtour.legitsystemsug.com/patrols';
+  const url = 'https://guardtour.legitsystemsug.com/patrols';
 
   // Retrieve token from SharedPreferences
   String? authToken = await _getToken();
@@ -35,13 +35,15 @@ Future<String> postData(
       body: jsonData,
     );
 
-    if (response.statusCode == 200) {
-      return 'Post request successful';
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      String successResponse = 'Patrol has been uploaded Successfully';
+      print(jsonData);
+      return successResponse;
     } else {
       // Parse the error message from the response
       Map<String, dynamic> errorResponse = jsonDecode(response.body);
       String errorMessage = errorResponse['message'] ?? 'Unknown error';
-
+      print(errorResponse);
       return 'Post request failed with status ${response.statusCode}: $errorMessage';
     }
   } catch (e) {

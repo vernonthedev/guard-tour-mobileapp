@@ -21,8 +21,7 @@ class PatrolAdapter extends TypeAdapter<Patrol> {
       ..scannedDate = fields[1] as DateTime
       ..startTime = fields[2] as String
       ..endTime = fields[3] as String
-      ..guardId = fields[4] as int
-      ..shiftId = fields[5] as int;
+      ..guardId = fields[4] as int;
   }
 
   @override
@@ -38,9 +37,7 @@ class PatrolAdapter extends TypeAdapter<Patrol> {
       ..writeByte(3)
       ..write(obj.endTime)
       ..writeByte(4)
-      ..write(obj.guardId)
-      ..writeByte(5)
-      ..write(obj.shiftId);
+      ..write(obj.guardId);
   }
 
   @override

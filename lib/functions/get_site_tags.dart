@@ -16,22 +16,19 @@ class Tag {
 
 class PatrolPlan {
   int id;
-  int shiftId;
   int siteId;
   List<Tag> tags;
 
   PatrolPlan({
     required this.id,
-    required this.shiftId,
     required this.siteId,
     required this.tags,
   });
 }
 
-Future<PatrolPlan?> fetchPatrolPlan(int guardId) async {
+Future<PatrolPlan?> fetchPatrolPlan(int deployedSiteId) async {
   try {
-    final apiUrl =
-        'https://guardtour.legitsystemsug.com/users/security-guards/$guardId/patrol-plan';
+    final apiUrl = 'https://guardtour.legitsystemsug.com/sites/$deployedSiteId';
 
     // Retrieve the token from SharedPreferences
     final token = await _getToken();
@@ -63,9 +60,8 @@ Future<PatrolPlan?> fetchPatrolPlan(int guardId) async {
       }
 
       return PatrolPlan(
-        id: jsonData['id'],
-        shiftId: jsonData['shiftId'],
-        siteId: jsonData['siteId'],
+        id: jsonData['id'] ?? 0,
+        siteId: jsonData['siteId'] ?? 0,
         tags: tags,
       );
     } else {

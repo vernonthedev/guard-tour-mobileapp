@@ -14,6 +14,4 @@ class Patrol extends HiveObject {
   late String endTime;
   @HiveField(4)
   late int guardId;
-  @HiveField(5)
-  late int shiftId;
 }

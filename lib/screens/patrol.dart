@@ -17,7 +17,7 @@ class PatrolPage extends StatefulWidget {
 
 class _PatrolPageState extends State<PatrolPage> {
   UserData? userData;
-  int? guardId;
+  int? deployedSiteId;
 
   String? firstScannedTag;
   String? lastScannedTag;
@@ -52,11 +52,11 @@ class _PatrolPageState extends State<PatrolPage> {
   Future<void> _loadPatrolPlan() async {
     print("============RUNNING============");
     if (userData != null) {
-      guardId = userData?.guardId;
-      print("Loaded guardid");
+      deployedSiteId = userData?.deployedSiteId;
+      print("Loaded deployedSiteID");
 
-      if (guardId != null) {
-        PatrolPlan? fetchedPlan = await fetchPatrolPlan(guardId ?? 0);
+      if (deployedSiteId != null) {
+        PatrolPlan? fetchedPlan = await fetchPatrolPlan(deployedSiteId ?? 0);
 
         if (fetchedPlan != null) {
           print('Fetched Plan: $fetchedPlan');
@@ -116,7 +116,7 @@ class _PatrolPageState extends State<PatrolPage> {
               child: ListView.builder(
                 itemCount: siteTags.length,
                 itemBuilder: (context, index) {
-                  final siteTag = "Scan Tag Here";
+                  const siteTag = "Scan Tag Here";
                   final isScanned = tagScannedStatus[index];
 
                   return GestureDetector(
@@ -126,7 +126,7 @@ class _PatrolPageState extends State<PatrolPage> {
                     child: Card(
                       margin: const EdgeInsets.all(8),
                       child: ListTile(
-                        title: Text(siteTag),
+                        title: const Text(siteTag),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
@@ -188,9 +188,7 @@ class _PatrolPageState extends State<PatrolPage> {
             ],
           ),
           onPressed: () {
-            //TODO: Save the made patrol to db
             _showArchiveDialog();
-            print("Patrol has been archived");
           },
         ),
       );
@@ -296,12 +294,14 @@ class _PatrolPageState extends State<PatrolPage> {
       String startTime = DateFormat("HH:mm").format(firstScannedTime!);
       String endTime = DateFormat("HH:mm").format(lastScannedTime!);
 
+      int? securityGuardId = userData?.guardId;
+
       // Call the function to make the POST request
       String message = await postData(
         date,
         startTime,
         endTime,
-        guardId ?? 0,
+        securityGuardId ?? 0,
       );
 
       // Display message using SnackBar if widget is still mounted
@@ -317,12 +317,7 @@ class _PatrolPageState extends State<PatrolPage> {
 
       // Archive the patrol session in Hive
       await archivePatrol(
-        userData?.firstName,
-        guardId,
-        startTime,
-        endTime,
-        patrolPlan.shiftId,
-      );
+          userData?.firstName, securityGuardId, startTime, endTime);
 
       // Wait for SnackBar to complete before navigating
       await Future.delayed(const Duration(seconds: 5));
@@ -366,13 +361,14 @@ class _PatrolPageState extends State<PatrolPage> {
       String startTime = DateFormat("HH:mm").format(firstScannedTime!);
       String endTime = DateFormat("HH:mm").format(lastScannedTime!);
 
+      int? securityGuardId = userData?.guardId;
+
       // Archive the patrol session in Hive
       await archivePatrol(
         userData?.firstName,
-        guardId,
+        securityGuardId,
         startTime,
         endTime,
-        patrolPlan.shiftId,
       );
 
       showDialog(
@@ -417,14 +413,18 @@ class _PatrolPageState extends State<PatrolPage> {
     }
   }
 
-  Future archivePatrol(guardName, guardId, startTime, endTime, shiftId) async {
+  Future archivePatrol(
+    guardName,
+    guardId,
+    startTime,
+    endTime,
+  ) async {
     final patrol = Patrol()
       ..guardName = guardName
       ..guardId = guardId
       ..scannedDate = DateTime.now()
       ..startTime = startTime
-      ..endTime = endTime
-      ..shiftId = shiftId;
+      ..endTime = endTime;
     final box = Boxes.getPatrols;
     box.add(patrol);
   }
