@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/boxes.dart';
+import 'archived_patrols.dart';
 import 'login.dart';
 
 // stless bcoz it only contains a list of tiles, doing minimalistic state changing functions
@@ -32,6 +33,16 @@ class Settings extends StatelessWidget {
           const SizedBox(
             width: 20,
           ),
+          ListTile(
+            leading: const Icon(CupertinoIcons.archivebox_fill),
+            title: const Text('View Archived Patrols'),
+            onTap: () {
+              //archive Patrol page
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const ArchivedPatrols()));
+            },
+          ),
+          const Divider(),
           ListTile(
             leading: const Icon(CupertinoIcons.delete_solid),
             title: const Text('Delete All Archived Patrols'),

@@ -5,6 +5,7 @@ import 'package:guard_tour/functions/get_site_tags.dart';
 import 'package:guard_tour/functions/upload_patrol.dart';
 import 'package:guard_tour/models/boxes.dart';
 import 'package:guard_tour/models/patrol_model.dart';
+import 'package:guard_tour/screens/archived_patrols.dart';
 import 'package:guard_tour/screens/home.dart';
 import 'package:intl/intl.dart';
 
@@ -375,7 +376,7 @@ class _PatrolPageState extends State<PatrolPage> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const HomePage()));
+                      builder: (context) => const ArchivedPatrols()));
                 },
                 child: const Text('OK'),
               ),
