@@ -31,15 +31,15 @@ class SiteProfile {
         (json['tags'] as List).map((tagJson) => Tag.fromJson(tagJson)).toList();
 
     return SiteProfile(
-      id: json['id'],
-      name: json['name'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
-      phoneNumber: json['phoneNumber'],
-      supervisorName: json['supervisorName'],
-      supervisorPhoneNumber: json['supervisorPhoneNumber'],
-      patrolPlanType: json['patrolPlanType'],
-      companyId: json['companyId'],
+      id: json['id'] ?? 0,
+      name: json['name'] ?? "",
+      latitude: json['latitude'] ?? 0,
+      longitude: json['longitude'] ?? 0,
+      phoneNumber: json['phoneNumber'] ?? 0,
+      supervisorName: json['supervisorName'] ?? "",
+      supervisorPhoneNumber: json['supervisorPhoneNumber'] ?? 0,
+      patrolPlanType: json['patrolPlanType'] ?? 0,
+      companyId: json['companyId'] ?? 0,
       tags: tags,
     );
   }

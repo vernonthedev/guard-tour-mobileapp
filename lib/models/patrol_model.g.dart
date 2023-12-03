@@ -27,7 +27,7 @@ class PatrolAdapter extends TypeAdapter<Patrol> {
   @override
   void write(BinaryWriter writer, Patrol obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.guardName)
       ..writeByte(1)

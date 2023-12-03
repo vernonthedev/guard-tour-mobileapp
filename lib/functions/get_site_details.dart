@@ -4,6 +4,7 @@ Developer: vernonthedev
 File Name: get_site_details.dart
 */
 import 'dart:convert';
+import 'package:guard_tour/functions/decode_token.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -38,15 +39,15 @@ class SiteDetails {
         (json['tags'] as List).map((tag) => Tag.fromJson(tag)).toList();
 
     return SiteDetails(
-      id: json['id'],
-      name: json['name'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
-      phoneNumber: json['phoneNumber'],
-      supervisorName: json['supervisorName'],
-      supervisorPhoneNumber: json['supervisorPhoneNumber'],
-      patrolPlanType: json['patrolPlanType'],
-      companyId: json['companyId'],
+      id: json['id'] ?? 0,
+      name: json['name'] ?? "",
+      latitude: json['latitude'] ?? 0,
+      longitude: json['longitude'] ?? 0,
+      phoneNumber: json['phoneNumber'] ?? "",
+      supervisorName: json['supervisorName'] ?? "",
+      supervisorPhoneNumber: json['supervisorPhoneNumber'] ?? "",
+      patrolPlanType: json['patrolPlanType'] ?? "",
+      companyId: json['companyId'] ?? 0,
       tags: tags,
     );
   }
@@ -65,9 +66,9 @@ class Tag {
 
   factory Tag.fromJson(Map<String, dynamic> json) {
     return Tag(
-      id: json['id'],
-      uid: json['uid'],
-      siteId: json['siteId'],
+      id: json['id'] ?? 0,
+      uid: json['uid'] ?? "",
+      siteId: json['siteId'] ?? 0,
     );
   }
 
@@ -84,8 +85,8 @@ Future<void> fetchDataAndStoreInSharedPreferences(int siteId) async {
   try {
     // Retrieve the token
     String? token = await _getToken();
-
-    if (token != null) {
+    UserData? userData = await decodeTokenFromSharedPreferences();
+    if (userData != null && token != null) {
       print(siteId);
       // Define the API endpoint
       String apiUrl = 'https://guardtour.legitsystemsug.com/sites/$siteId';
@@ -129,7 +130,7 @@ Future<void> fetchDataAndStoreInSharedPreferences(int siteId) async {
       }
     } else {
       // Handle the case where the token is null
-      print('Token is null. Unable to fetch data.');
+      print('Token or UserData is null. Unable to fetch data.');
     }
   } catch (e) {
     // Handle any exceptions that occur during the process

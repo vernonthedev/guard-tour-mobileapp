@@ -30,8 +30,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // all the profile sections
   final List<Widget> _tabPages = [
-    const SiteProfileTab(), // Removed 'const' to allow parameters
     const ShiftTab(shift: 'Night Shift'),
+    const SiteProfileTab(),
     const ShiftTab(shift: 'Day Shift'),
   ];
 
@@ -44,14 +44,14 @@ class _ProfilePageState extends State<ProfilePage> {
       if (_selectedTabIndex == 0) {
         // Fetch site data when the "Profile" tab is selected
         int? siteId;
-        userData = await decodeTokenFromSharedPreferences();
+        UserData? userData = await decodeTokenFromSharedPreferences();
         if (userData != null) {
-          siteId = userData?.deployedSiteId;
+          siteId = userData.deployedSiteId;
 
           print('Site ID from userData: $siteId');
 
           // Fetch site data when the "Profile" tab is selected
-          await fetchDataAndStoreInSharedPreferences(siteId ?? 0);
+          await fetchDataAndStoreInSharedPreferences(siteId);
 
           if (userData == null) {
             print("DATA NOT FOUND!");
@@ -61,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
             _siteProfileTabKey.currentState?.updateState();
 
             // Update the _SiteProfileTabState by triggering a rebuild
-            (_tabPages[_selectedTabIndex] as _ProfilePageState).setState(() {});
+            _siteProfileTabKey.currentState?.updateState();
           }
         } else {
           print("DATA NOT FOUND!");
@@ -103,12 +103,12 @@ class _ProfilePageState extends State<ProfilePage> {
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.building_2_fill),
-            label: 'Site Profile',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.moon_stars_fill),
             label: 'Night Shift',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.building_2_fill),
+            label: 'Site Profile',
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.sun_haze_fill),
@@ -216,17 +216,15 @@ class _SiteProfileTabState extends State<SiteProfileTab> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       // Retrieve site details from SharedPreferences
-      int siteId = prefs.getInt('siteId') ?? 0;
-      String siteName = prefs.getString('siteName') ?? 'Your Deployed Site';
-      double siteLatitude = prefs.getDouble('siteLatitude') ?? 0.0;
-      double siteLongitude = prefs.getDouble('siteLongitude') ?? 0.0;
-      String sitePhoneNumber =
-          prefs.getString('sitePhoneNumber') ?? '+256-000-000-000';
-      String supervisorName = prefs.getString('supervisorName') ?? 'admin';
-      String supervisorPhoneNumber =
-          prefs.getString('supervisorPhoneNumber') ?? '+256-000-000-000';
-      String patrolPlan = prefs.getString('patrolPlanType') ?? 'patrol plan';
-      int companyId = prefs.getInt('companyId') ?? 0;
+      int? siteId = prefs.getInt('siteId');
+      String? siteName = prefs.getString('siteName');
+      double? siteLatitude = prefs.getDouble('siteLatitude');
+      double? siteLongitude = prefs.getDouble('siteLongitude');
+      String? sitePhoneNumber = prefs.getString('sitePhoneNumber');
+      String? supervisorName = prefs.getString('supervisorName');
+      String? supervisorPhoneNumber = prefs.getString('supervisorPhoneNumber');
+      String? patrolPlan = prefs.getString('patrolPlanType');
+      int? companyId = prefs.getInt('companyId');
 
       // Return the retrieved values as a map
       return {

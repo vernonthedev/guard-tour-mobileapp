@@ -315,10 +315,6 @@ class _PatrolPageState extends State<PatrolPage> {
         );
       }
 
-      // Archive the patrol session in Hive
-      await archivePatrol(
-          userData?.firstName, securityGuardId, startTime, endTime);
-
       // Wait for SnackBar to complete before navigating
       await Future.delayed(const Duration(seconds: 5));
 
@@ -354,9 +350,6 @@ class _PatrolPageState extends State<PatrolPage> {
   void _showArchiveDialog() async {
     // Ensure that at least one tag has been scanned
     if (_scannedTags.isNotEmpty) {
-      // Use the date when the first scan was made
-      String date = DateFormat("yyyy-MM-dd").format(firstScannedTime!);
-
       // Format the startTime and endTime
       String startTime = DateFormat("HH:mm").format(firstScannedTime!);
       String endTime = DateFormat("HH:mm").format(lastScannedTime!);
