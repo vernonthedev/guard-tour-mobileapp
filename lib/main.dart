@@ -5,11 +5,12 @@ File Name: main.dart
 */
 
 import 'package:flutter/material.dart';
+import 'package:guard_tour/functions/user_input_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'models/boxes.dart';
 import 'screens/home.dart';
 import 'screens/login.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 
 // Main starter function for the whole application
 void main() async {
@@ -17,7 +18,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Boxes.init(); // Initialize Hive
   // run the application after the db initialization
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (context) => UserInputProvider(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

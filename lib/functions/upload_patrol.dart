@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<String> postData(
-    String date, String startTime, String endTime, int securityGuardId) async {
+Future<String> postData(String date, String startTime, String endTime,
+    String securityGuardId) async {
   const url = 'https://guardtour.legitsystemsug.com/patrols';
 
   // Retrieve token from SharedPreferences

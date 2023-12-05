@@ -9,7 +9,10 @@ import 'package:guard_tour/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:guard_tour/screens/patrol.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../functions/get_security_guard_details.dart';
+import '../functions/user_input_provider.dart';
 import '../models/security_guard_model.dart';
 import '../widgets/input_dialog.dart';
 
@@ -23,8 +26,8 @@ class verifyGuardTag extends StatefulWidget {
 class _verifyGuardTagState extends State<verifyGuardTag> {
   String? userInput;
 
-// Declare guard_details as a single SecurityGuardDetails
-  SecurityGuardDetails? guard_details;
+// Declare guardDetails as a single SecurityGuardDetails
+  SecurityGuardDetails? guardDetails;
 
 // Function to display the scanning input dialog and retrieve its data
   _showInputDialog(BuildContext context) async {
@@ -38,10 +41,19 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
       setState(() {
         // Update the UI with the scanned tag and fetched guard details
         this.userInput = userInput;
-        this.guard_details = fetchedGuardDetails;
+        guardDetails = fetchedGuardDetails;
       });
 
-      if (guard_details != null) {
+      if (guardDetails != null) {
+        // Store the user input to SharedPreferences only if the guard is verified in the system
+        // await _storeUserInput(userInput);
+
+        //pass the user input to provider for statemmgt across the diff screens
+        // Get the provider and set the userInput
+        UserInputProvider userInputProvider =
+            Provider.of<UserInputProvider>(context, listen: false);
+        userInputProvider.setUserInput(userInput);
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Tag Verified!'),
@@ -121,7 +133,7 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
               ),
               const SizedBox(height: 20),
               const Text(
-                'Verify Guard ID Credentials',
+                'Verify Guard Making Patrol',
                 style: TextStyle(fontSize: 20),
               ),
               const SizedBox(
@@ -158,7 +170,7 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
                           style: TextStyle(fontSize: 18),
                         ),
                         subtitle: Text(
-                          guard_details?.firstName ?? 'verify your name',
+                          '${guardDetails?.firstName ?? 'verify your name'} ${guardDetails?.lastName ?? ''}',
                           style: const TextStyle(fontSize: 24),
                         ),
                       ),
@@ -168,29 +180,29 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
                           style: TextStyle(fontSize: 18),
                         ),
                         subtitle: Text(
-                          guard_details?.dateOfBirth ?? 'verify your DOB',
+                          guardDetails?.dateOfBirth ?? 'verify your DOB',
                           style: const TextStyle(fontSize: 24),
                         ),
                       ),
                       ListTile(
                         title: const Text(
-                          'Company ID:',
+                          'Gender:',
                           style: TextStyle(fontSize: 18),
                         ),
                         subtitle: Text(
-                          guard_details?.companyId.toString() ??
-                              'verify your company id',
+                          guardDetails?.gender.toString() ??
+                              'verify your gender',
                           style: const TextStyle(fontSize: 24),
                         ),
                       ),
                       ListTile(
                         title: const Text(
-                          'Deployed Site ID:',
+                          'Armed Status',
                           style: TextStyle(fontSize: 18),
                         ),
                         subtitle: Text(
-                          guard_details?.deployedSiteId.toString() ??
-                              'No Deployed Site ID',
+                          guardDetails?.armedStatus.toString() ??
+                              'Armed Status',
                           style: const TextStyle(fontSize: 24),
                         ),
                       ),
@@ -200,7 +212,7 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
                           style: TextStyle(fontSize: 18),
                         ),
                         subtitle: Text(
-                          guard_details?.shiftId.toString() ??
+                          guardDetails?.shiftId.toString() ??
                               'verify your shift id',
                           style: const TextStyle(fontSize: 24),
                         ),
@@ -211,7 +223,7 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
                           style: TextStyle(fontSize: 18),
                         ),
                         subtitle: Text(
-                          guard_details?.phoneNumber.toString() ??
+                          guardDetails?.phoneNumber.toString() ??
                               'verify phone Number',
                           style: const TextStyle(fontSize: 24),
                         ),
@@ -222,7 +234,7 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
                           style: TextStyle(fontSize: 18),
                         ),
                         subtitle: Text(
-                          guard_details?.username.toString() ??
+                          guardDetails?.username.toString() ??
                               'verify username',
                           style: const TextStyle(fontSize: 24),
                         ),
@@ -234,7 +246,7 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                  'Your Patrol Session Has Began ${guard_details!.firstName}'),
+                                  'Your Patrol Session Has Began ${guardDetails!.firstName}'),
                               backgroundColor: Colors.green,
                               duration: const Duration(
                                   seconds:
@@ -288,4 +300,10 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
       ),
     );
   }
+}
+
+// Function to store user input to SharedPreferences
+Future<void> _storeUserInput(String userInput) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('userInput', userInput);
 }
