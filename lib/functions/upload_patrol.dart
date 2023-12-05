@@ -34,19 +34,38 @@ Future<String> postData(String date, String startTime, String endTime,
       },
       body: jsonData,
     );
-
     if (response.statusCode == 201 || response.statusCode == 200) {
-      String successResponse = 'Patrol has been uploaded Successfully';
-      print(jsonData);
-      return successResponse;
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+      if (jsonResponse.containsKey('id')) {
+        // If there is an 'id' field in the response, consider it a success
+        String successResponse = 'Patrol has been uploaded Successfully';
+        print(jsonData);
+        return successResponse;
+      } else {
+        // Handle the case where the success response does not have the expected structure
+        print('Unexpected success response format');
+        return 'Unexpected success format';
+      }
     } else {
-      // Parse the error message from the response
-      Map<String, dynamic> errorResponse = jsonDecode(response.body);
-      String errorMessage = errorResponse['message'] ?? 'Unknown error';
-      print(errorResponse);
-      return 'Post request failed with status ${response.statusCode}: $errorMessage';
+      print("Error");
+      return "Error occrued";
+
+      // Parse the error message from the response dynamically
+      // Map<String, dynamic> errorResponse = jsonDecode(response.body);
+
+      // if (errorResponse.containsKey('message')) {
+      //   String errorMessage = errorResponse['message'] ?? 'Unknown error';
+      //   print(errorMessage);
+      //   return 'Post request failed with status ${response.statusCode}: $errorMessage';
+      // } else {
+      //   // Handle the case where the error response does not have the expected structure
+      //   print('Unexpected error response format');
+      //   return 'Unexpected error format';
+      // }
     }
   } catch (e) {
+    print(e);
     return 'Error making post request: $e';
   }
 }

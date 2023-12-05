@@ -45,14 +45,12 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
       });
 
       if (guardDetails != null) {
-        // Store the user input to SharedPreferences only if the guard is verified in the system
-        // await _storeUserInput(userInput);
-
         //pass the user input to provider for statemmgt across the diff screens
         // Get the provider and set the userInput
         UserInputProvider userInputProvider =
             Provider.of<UserInputProvider>(context, listen: false);
         userInputProvider.setUserInput(userInput);
+        print(userInput);
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

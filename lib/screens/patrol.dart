@@ -6,7 +6,6 @@ import 'package:guard_tour/functions/upload_patrol.dart';
 import 'package:guard_tour/screens/home.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../functions/user_input_provider.dart';
 
@@ -277,14 +276,14 @@ class _PatrolPageState extends State<PatrolPage> {
       String startTime = DateFormat("HH:mm").format(firstScannedTime!);
       String endTime = DateFormat("HH:mm").format(lastScannedTime!);
 
-      // Use the stored userInput value instead of userData?.guardId
-      // String? securityGuardId = await _getUserInput();
       UserInputProvider userInputProvider =
           Provider.of<UserInputProvider>(context, listen: false);
       String? securityGuardId = userInputProvider.userInput;
 
       print(securityGuardId);
       //Call the function to make the POST request
+      print(
+          '**************DETAILS: $date, $startTime, $endTime, $securityGuardId');
       String message = await postData(
         date,
         startTime,
@@ -334,10 +333,4 @@ class _PatrolPageState extends State<PatrolPage> {
       );
     }
   }
-}
-
-// Function to retrieve the stored user input from SharedPreferences
-Future<String?> _getUserInput() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getString('userInput');
 }

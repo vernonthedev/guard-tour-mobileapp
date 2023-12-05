@@ -33,7 +33,6 @@ Future<SecurityGuardDetails?> fetchSecurityGuardDetails(
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Parse the JSON response
         Map<String, dynamic> siteData = json.decode(response.body);
-
         // Get the shifts data
         List<dynamic> shiftsData = siteData['shifts'];
 // Find the security guard with the entered unique ID
@@ -43,7 +42,7 @@ Future<SecurityGuardDetails?> fetchSecurityGuardDetails(
           selectedGuard = guardsData
               .map((guardData) => SecurityGuardDetails.fromJson(guardData))
               .firstWhere(
-                (guard) => guard.uniqueId == enteredUniqueId,
+                (guard) => guard.uniqueId.toString() == enteredUniqueId,
                 orElse: () => null as SecurityGuardDetails,
               );
         }
