@@ -8,9 +8,9 @@ File Name: home.dart
 import 'package:guard_tour/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:guard_tour/functions/decode_token.dart';
-import 'package:guard_tour/screens/login.dart';
-
+import 'package:guard_tour/screens/patrol.dart';
+import '../functions/get_security_guard_details.dart';
+import '../models/security_guard_model.dart';
 import '../widgets/input_dialog.dart';
 
 class verifyGuardTag extends StatefulWidget {
@@ -21,42 +21,40 @@ class verifyGuardTag extends StatefulWidget {
 }
 
 class _verifyGuardTagState extends State<verifyGuardTag> {
-  UserData? userData;
   String? userInput;
 
-// function to display the scanning input dialog and retrieve its data
-  _showInputDialog(BuildContext context) async {
-    final result = await showInputDialog(context);
+// Declare guard_details as a single SecurityGuardDetails
+  SecurityGuardDetails? guard_details;
 
-    userInput = result;
+// Function to display the scanning input dialog and retrieve its data
+  _showInputDialog(BuildContext context) async {
+    final userInput = await showInputDialog(context);
 
     if (userInput != null) {
-      //Verify the tag details
-      userData = await decodeTokenFromSharedPreferences();
+      // Fetch security guard details based on the scanned tag
+      SecurityGuardDetails? fetchedGuardDetails =
+          await fetchSecurityGuardDetails(userInput);
 
-      if (userData != null) {
-        if (userInput == userData!.username) {
-          //rebuild the widget after the user data has been decoded
-          //and send the data to the list tiles
-          setState(() {});
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Please Scan Your Verified ID Tag!'),
-              backgroundColor: Colors.red,
-              duration:
-                  Duration(seconds: 2), // You can adjust the duration as needed
-            ),
-          );
-        }
+      setState(() {
+        // Update the UI with the scanned tag and fetched guard details
+        this.userInput = userInput;
+        this.guard_details = fetchedGuardDetails;
+      });
+
+      if (guard_details != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Tag Verified!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text(
-                'User Token Verification Failed! Please Login Again to solve this issue'),
+            content: Text('Invalid Tag!'),
             backgroundColor: Colors.red,
-            duration:
-                Duration(seconds: 2), // You can adjust the duration as needed
+            duration: Duration(seconds: 2),
           ),
         );
       }
@@ -65,20 +63,19 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
         const SnackBar(
           content: Text('Please Scan Your ID Tag For Verification'),
           backgroundColor: Colors.red,
-          duration:
-              Duration(seconds: 2), // You can adjust the duration as needed
+          duration: Duration(seconds: 2),
         ),
       );
     }
   }
 
 // function to verify scanned tag and route to home page
-  _navigateToDisplayHomeScreen(BuildContext context) async {
+  _navigateToDisplayPatrolScreen(BuildContext context) async {
     // Route to the home page after successful id tags verification
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) {
-          return const HomePage();
+          return const PatrolPage();
         },
       ),
     );
@@ -90,7 +87,7 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) {
-          return const LoginPage(); // Replace with the desired previous page
+          return const HomePage(); // Replace with the desired previous page
         },
       ),
     );
@@ -161,17 +158,17 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
                           style: TextStyle(fontSize: 18),
                         ),
                         subtitle: Text(
-                          userData?.firstName ?? 'verify your name',
+                          guard_details?.firstName ?? 'verify your name',
                           style: const TextStyle(fontSize: 24),
                         ),
                       ),
                       ListTile(
                         title: const Text(
-                          'Guard ID Tag:',
+                          'Date of Birth:',
                           style: TextStyle(fontSize: 18),
                         ),
                         subtitle: Text(
-                          userInput ?? 'verify your id',
+                          guard_details?.dateOfBirth ?? 'verify your DOB',
                           style: const TextStyle(fontSize: 24),
                         ),
                       ),
@@ -181,7 +178,7 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
                           style: TextStyle(fontSize: 18),
                         ),
                         subtitle: Text(
-                          userData?.companyId.toString() ??
+                          guard_details?.companyId.toString() ??
                               'verify your company id',
                           style: const TextStyle(fontSize: 24),
                         ),
@@ -192,7 +189,7 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
                           style: TextStyle(fontSize: 18),
                         ),
                         subtitle: Text(
-                          userData?.deployedSiteId.toString() ??
+                          guard_details?.deployedSiteId.toString() ??
                               'No Deployed Site ID',
                           style: const TextStyle(fontSize: 24),
                         ),
@@ -203,28 +200,30 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
                           style: TextStyle(fontSize: 18),
                         ),
                         subtitle: Text(
-                          userData?.shiftId.toString() ??
+                          guard_details?.shiftId.toString() ??
                               'verify your shift id',
                           style: const TextStyle(fontSize: 24),
                         ),
                       ),
                       ListTile(
                         title: const Text(
-                          'Issued At:',
+                          'Phone Number',
                           style: TextStyle(fontSize: 18),
                         ),
                         subtitle: Text(
-                          userData?.iat.toString() ?? 'verify issue date',
+                          guard_details?.phoneNumber.toString() ??
+                              'verify phone Number',
                           style: const TextStyle(fontSize: 24),
                         ),
                       ),
                       ListTile(
                         title: const Text(
-                          'Expiration:',
+                          'Username:',
                           style: TextStyle(fontSize: 18),
                         ),
                         subtitle: Text(
-                          userData?.exp.toString() ?? 'verify expiration date',
+                          guard_details?.username.toString() ??
+                              'verify username',
                           style: const TextStyle(fontSize: 24),
                         ),
                       ),
@@ -235,14 +234,14 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                  'Welcome to Guard Tour ${userData!.firstName}'),
+                                  'Your Patrol Session Has Began ${guard_details!.firstName}'),
                               backgroundColor: Colors.green,
                               duration: const Duration(
                                   seconds:
                                       2), // You can adjust the duration as needed
                             ),
                           );
-                          _navigateToDisplayHomeScreen(context);
+                          _navigateToDisplayPatrolScreen(context);
                         },
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -253,7 +252,7 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
                             ),
                             SizedBox(width: 10),
                             Text(
-                              'Verify Tag Info',
+                              'Start Patrolling',
                               style: TextStyle(fontSize: 16),
                             ),
                           ],

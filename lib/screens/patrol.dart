@@ -3,8 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:guard_tour/functions/decode_token.dart';
 import 'package:guard_tour/functions/get_site_tags.dart';
 import 'package:guard_tour/functions/upload_patrol.dart';
-import 'package:guard_tour/models/boxes.dart';
-import 'package:guard_tour/models/patrol_model.dart';
 import 'package:guard_tour/screens/home.dart';
 import 'package:intl/intl.dart';
 

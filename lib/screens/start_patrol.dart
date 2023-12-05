@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:guard_tour/screens/patrol.dart';
+import 'package:guard_tour/screens/verify_guard.dart';
 
 class StartPatrolPage extends StatelessWidget {
   const StartPatrolPage({super.key});
@@ -18,9 +18,9 @@ class StartPatrolPage extends StatelessWidget {
             CupertinoButton.filled(
               onPressed: () {
                 // Add your logic for starting the patrol session here
-                print('Starting Patrol Session');
+                print('Starting Patrol Session with Guard Verification');
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const PatrolPage()));
+                    builder: (context) => const verifyGuardTag()));
               },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
