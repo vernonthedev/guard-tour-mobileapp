@@ -123,21 +123,36 @@ class _ArchivedPatrolsState extends State<ArchivedPatrols> {
           mainAxisSize: MainAxisSize.min,
           children: const [
             Icon(
-              CupertinoIcons.add_circled_solid,
-              color: CupertinoColors.activeBlue,
+              CupertinoIcons.cloud_upload_fill,
+              color: CupertinoColors.systemRed,
             ),
             SizedBox(width: 10),
             Text(
-              'Start Patrol',
+              'Upload All Patrols',
               style: TextStyle(fontSize: 16),
             ),
           ],
         ),
         onPressed: () {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const PatrolPage()));
+          //TODO: Implement upload all archived patrols
         },
       ),
     );
+  }
+
+  Future archivePatrol(
+    guardName,
+    guardId,
+    startTime,
+    endTime,
+  ) async {
+    final patrol = Patrol()
+      ..guardName = guardName
+      ..guardId = guardId
+      ..scannedDate = DateTime.now()
+      ..startTime = startTime
+      ..endTime = endTime;
+    final box = Boxes.getPatrols;
+    box.add(patrol);
   }
 }

@@ -5,7 +5,6 @@ import 'package:guard_tour/functions/get_site_tags.dart';
 import 'package:guard_tour/functions/upload_patrol.dart';
 import 'package:guard_tour/models/boxes.dart';
 import 'package:guard_tour/models/patrol_model.dart';
-import 'package:guard_tour/screens/archived_patrols.dart';
 import 'package:guard_tour/screens/home.dart';
 import 'package:intl/intl.dart';
 
@@ -173,25 +172,6 @@ class _PatrolPageState extends State<PatrolPage> {
             ),
           ],
         ),
-        floatingActionButton: CupertinoButton(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              Icon(
-                CupertinoIcons.cloud_download_fill,
-                color: CupertinoColors.systemRed,
-              ),
-              SizedBox(width: 10),
-              Text(
-                'Archive',
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
-          ),
-          onPressed: () {
-            _showArchiveDialog();
-          },
-        ),
       );
     }
   }
@@ -346,80 +326,5 @@ class _PatrolPageState extends State<PatrolPage> {
         },
       );
     }
-  }
-
-  void _showArchiveDialog() async {
-    // Ensure that at least one tag has been scanned
-    if (_scannedTags.isNotEmpty) {
-      // Format the startTime and endTime
-      String startTime = DateFormat("HH:mm").format(firstScannedTime!);
-      String endTime = DateFormat("HH:mm").format(lastScannedTime!);
-
-      int? securityGuardId = userData?.guardId;
-
-      // Archive the patrol session in Hive
-      await archivePatrol(
-        userData?.firstName,
-        securityGuardId,
-        startTime,
-        endTime,
-      );
-
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Patrol Archived Successfully'),
-            content: const Text(
-                'The patrol session has been successfully archived.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const ArchivedPatrols()));
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      // Display a message if no tags have been scanned
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Error'),
-            content: const Text(
-                'No tags have been scanned. And No Archiving Took Place'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
-
-  Future archivePatrol(
-    guardName,
-    guardId,
-    startTime,
-    endTime,
-  ) async {
-    final patrol = Patrol()
-      ..guardName = guardName
-      ..guardId = guardId
-      ..scannedDate = DateTime.now()
-      ..startTime = startTime
-      ..endTime = endTime;
-    final box = Boxes.getPatrols;
-    box.add(patrol);
   }
 }

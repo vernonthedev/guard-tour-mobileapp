@@ -35,7 +35,7 @@ class Settings extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(CupertinoIcons.archivebox_fill),
-            title: const Text('View Archived Patrols'),
+            title: const Text('View Failed Patrols'),
             onTap: () {
               //archive Patrol page
               Navigator.of(context).push(MaterialPageRoute(
@@ -45,13 +45,13 @@ class Settings extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(CupertinoIcons.delete_solid),
-            title: const Text('Delete All Archived Patrols'),
+            title: const Text('Delete All Failed Patrols'),
             onTap: () {
               // Call the function to delete all patrols
               Boxes.deleteAllPatrols();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('All Archived Patrols Deleted Successfully'),
+                  content: Text('All Failed Patrols Deleted Successfully'),
                   backgroundColor: Colors.yellow,
                   duration: Duration(
                       seconds: 2), // You can adjust the duration as needed
