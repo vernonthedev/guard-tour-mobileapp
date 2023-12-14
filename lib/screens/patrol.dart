@@ -281,22 +281,30 @@ class _PatrolPageState extends State<PatrolPage> {
       String? securityGuardId = userInputProvider.userInput;
 
       print(securityGuardId);
-      //Call the function to make the POST request
+      // Call the function to make the POST request
       print(
           '**************DETAILS: $date, $startTime, $endTime, $securityGuardId');
-      String message = await postData(
-        date,
-        startTime,
-        endTime,
-        securityGuardId ?? "",
-      );
+
+      String message = 'Patrol was not uploaded.';
+
+      try {
+        // Call the function to make the POST request
+        await postData(date, startTime, endTime, securityGuardId ?? "");
+
+        // Update the success message
+        message = 'Patrol was uploaded successfully.';
+      } catch (e) {
+        // Handle any errors if needed
+        print('Error: $e');
+      }
 
       // Display message using SnackBar if widget is still mounted
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(message),
-            backgroundColor: Colors.red,
+            backgroundColor:
+                message.contains('success') ? Colors.green : Colors.red,
             duration: const Duration(seconds: 5),
           ),
         );

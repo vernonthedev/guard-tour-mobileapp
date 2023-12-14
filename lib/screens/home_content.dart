@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../functions/get_home_patrols.dart';
 import '../models/home_model.dart';
+import 'package:intl/intl.dart';
 
 class HomePageContent extends StatefulWidget {
   const HomePageContent({Key? key}) : super(key: key);
@@ -29,10 +30,8 @@ class _HomePageContentState extends State<HomePageContent> {
   }
 
   Future<List<HomeDetails>> _filterPatrols(String query) async {
-    // Wait for the future to complete and get the patrols
     List<HomeDetails> allPatrols = await getHomeDetails();
 
-    // Filter patrols based on Guard Name
     List<HomeDetails> filteredPatrols = allPatrols
         .where((patrol) =>
             patrol
@@ -43,6 +42,9 @@ class _HomePageContentState extends State<HomePageContent> {
             patrol
                 .getSecurityGuardDetails()
                 .lastName
+                .toLowerCase()
+                .contains(query.toLowerCase()) ||
+            ('${patrol.getSecurityGuardDetails().firstName} ${patrol.getSecurityGuardDetails().lastName}')
                 .toLowerCase()
                 .contains(query.toLowerCase()))
         .toList();
@@ -85,11 +87,10 @@ class _HomePageContentState extends State<HomePageContent> {
                 controller: searchController,
                 placeholder: 'Search by Guard Name',
                 onChanged: (query) {
-                  // Delay the search by a short duration to avoid rapid updates
-                  Future.delayed(const Duration(milliseconds: 300), () {
+                  _filterPatrols(query).then((filteredPatrols) {
                     setState(() {
-                      // Call _filterPatrols with the current query
-                      _filterPatrols(query);
+                      // Update your original list if you need it for other purposes
+                      patrols = filteredPatrols;
                     });
                   });
                 },
@@ -133,7 +134,10 @@ class _HomePageContentState extends State<HomePageContent> {
           ),
           Expanded(
             child: FutureBuilder<List<HomeDetails>>(
-              future: _filterPatrols(searchController.text),
+              future: searchController.text.isEmpty
+                  ? getHomeDetails() // Fetch all home details
+                  : _filterPatrols(
+                      searchController.text), // Fetch filtered details
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -146,13 +150,25 @@ class _HomePageContentState extends State<HomePageContent> {
                     child: Text('No Patrol data available'),
                   );
                 } else {
-                  // Data has been fetched successfully
-                  List<HomeDetails> patrols = snapshot.data!;
+                  patrols = snapshot.data!;
+                  List<HomeDetails> filteredPatrols = patrols
+                      .where((patrol) =>
+                          patrol.date ==
+                              selectedDate.toLocal().toString().split(' ')[0] &&
+                          patrol
+                              .getSecurityGuardDetails()
+                              .firstName
+                              .toLowerCase()
+                              .contains(searchController.text.toLowerCase()))
+                      .toList();
 
                   return ListView.builder(
-                    itemCount: patrols.length,
+                    itemCount: filteredPatrols.length,
                     itemBuilder: (context, index) {
-                      final patrol = patrols[index];
+                      final patrol = filteredPatrols[index];
+                      // Format the date
+                      String formattedDate = DateFormat('MMM dd, yyyy')
+                          .format(DateTime.parse(patrol.date));
                       return ListTile(
                         title: Text(
                           'Guard Name: ${patrol.getSecurityGuardDetails().firstName} ${patrol.getSecurityGuardDetails().lastName}',
@@ -160,10 +176,9 @@ class _HomePageContentState extends State<HomePageContent> {
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Date: ${patrol.date}'),
+                            Text('Date: $formattedDate'),
                             Text(
                                 'Time: ${patrol.startTime} - ${patrol.endTime}'),
-                            // Add more properties as needed
                           ],
                         ),
                         trailing: const Icon(
@@ -192,9 +207,11 @@ class _HomePageContentState extends State<HomePageContent> {
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-        // Perform filtering based on the selected date
-        // Update your list of patrols accordingly
-        // TODO: Implement your filtering logic
+        _filterPatrols(searchController.text).then((filteredPatrols) {
+          setState(() {
+            patrols = filteredPatrols;
+          });
+        });
       });
     }
   }

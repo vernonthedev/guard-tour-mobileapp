@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<String> postData(String date, String startTime, String endTime,
+Future<void> postData(String date, String startTime, String endTime,
     String securityGuardId) async {
   const url = 'https://guardtour.legitsystemsug.com/patrols';
 
@@ -11,7 +11,8 @@ Future<String> postData(String date, String startTime, String endTime,
 
   // Check if authToken is available
   if (authToken == null || authToken.isEmpty) {
-    return 'Failed to retrieve authentication token. Aborting post request.';
+    print('Failed to retrieve authentication token. Aborting post request.');
+    return;
   }
 
   // Your JSON payload
@@ -19,7 +20,7 @@ Future<String> postData(String date, String startTime, String endTime,
     'date': date,
     'startTime': startTime,
     'endTime': endTime,
-    'securityGuardId': securityGuardId,
+    'securityGuardUniqueId': securityGuardId,
   };
 
   // Encode the payload to JSON
@@ -34,39 +35,19 @@ Future<String> postData(String date, String startTime, String endTime,
       },
       body: jsonData,
     );
+
     if (response.statusCode == 201 || response.statusCode == 200) {
+      // Parse the JSON response into a Map
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
-      if (jsonResponse.containsKey('id')) {
-        // If there is an 'id' field in the response, consider it a success
-        String successResponse = 'Patrol has been uploaded Successfully';
-        print(jsonData);
-        return successResponse;
-      } else {
-        // Handle the case where the success response does not have the expected structure
-        print('Unexpected success response format');
-        return 'Unexpected success format';
-      }
+      // Print the details to the console
+      print('Patrol Details: $jsonResponse');
     } else {
-      print("Error");
-      return "Error occrued";
-
-      // Parse the error message from the response dynamically
-      // Map<String, dynamic> errorResponse = jsonDecode(response.body);
-
-      // if (errorResponse.containsKey('message')) {
-      //   String errorMessage = errorResponse['message'] ?? 'Unknown error';
-      //   print(errorMessage);
-      //   return 'Post request failed with status ${response.statusCode}: $errorMessage';
-      // } else {
-      //   // Handle the case where the error response does not have the expected structure
-      //   print('Unexpected error response format');
-      //   return 'Unexpected error format';
-      // }
+      print('Error: An Error Has occurred');
+      print('Error: ${response.statusCode} - ${response.reasonPhrase}');
     }
   } catch (e) {
-    print(e);
-    return 'Error making post request: $e';
+    print('Error making post request: $e');
   }
 }
 
