@@ -109,13 +109,16 @@ class _HomePageContentState extends State<HomePageContent> {
             ),
           ),
           const SizedBox(height: 10),
-          TextField(
-            controller: searchController,
-            decoration:
-                const InputDecoration(labelText: 'Search by Guard Name'),
-            onChanged: (query) {
-              _loadPatrolsFromHive();
-            },
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: TextField(
+              controller: searchController,
+              decoration:
+                  const InputDecoration(labelText: 'Search by Guard Name'),
+              onChanged: (query) {
+                _loadPatrolsFromHive();
+              },
+            ),
           ),
           ElevatedButton(
             onPressed: () => _selectDate(context),
@@ -128,7 +131,9 @@ class _HomePageContentState extends State<HomePageContent> {
                 final patrol = patrols[index];
                 String formattedDate = DateFormat('MMM dd, yyyy')
                     .format(DateTime.parse(patrol.date));
+                int listNumber = index + 1;
                 return ListTile(
+                  leading: Text('$listNumber'),
                   title: Text(
                     'Guard Name: ${patrol.getSecurityGuardDetails().firstName} ${patrol.getSecurityGuardDetails().lastName}',
                   ),
