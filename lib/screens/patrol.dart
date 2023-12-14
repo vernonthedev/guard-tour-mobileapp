@@ -42,25 +42,25 @@ class _PatrolPageState extends State<PatrolPage> {
   Future<void> _initUserData() async {
     userData = await decodeTokenFromSharedPreferences();
     if (userData != null) {
-      print('Initialized userData: $userData');
+      debugPrint('Initialized userData: $userData');
       await _loadPatrolPlan();
       setState(() {});
     } else {
-      print('Failed to initialize userData.');
+      debugPrint('Failed to initialize userData.');
     }
   }
 
   Future<void> _loadPatrolPlan() async {
-    print("============RUNNING============");
+    debugPrint("============RUNNING============");
     if (userData != null) {
       deployedSiteId = userData?.deployedSiteId;
-      print("Loaded deployedSiteID");
+      debugPrint("Loaded deployedSiteID");
 
       if (deployedSiteId != null) {
         PatrolPlan? fetchedPlan = await fetchPatrolPlan(deployedSiteId ?? 0);
 
         if (fetchedPlan != null) {
-          print('Fetched Plan: $fetchedPlan');
+          debugPrint('Fetched Plan: $fetchedPlan');
           setState(() {
             patrolPlan = fetchedPlan;
             tagScannedStatus =
@@ -68,13 +68,13 @@ class _PatrolPageState extends State<PatrolPage> {
             siteTags = patrolPlan.tags;
           });
         } else {
-          print('Failed to load patrol plan.');
+          debugPrint('Failed to load patrol plan.');
         }
       } else {
-        print("Token is null");
+        debugPrint("Token is null");
       }
     } else {
-      print("Token is empty and not found");
+      debugPrint("Token is empty and not found");
     }
   }
 
@@ -150,7 +150,7 @@ class _PatrolPageState extends State<PatrolPage> {
                 onPressed: () async {
                   //upload the patrol from here
                   uploadPatrol();
-                  print("Patrol has been uploaded");
+                  debugPrint("Patrol has been uploaded");
                 },
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -280,9 +280,9 @@ class _PatrolPageState extends State<PatrolPage> {
           Provider.of<UserInputProvider>(context, listen: false);
       String? securityGuardId = userInputProvider.userInput;
 
-      print(securityGuardId);
+      debugPrint(securityGuardId);
       // Call the function to make the POST request
-      print(
+      debugPrint(
           '**************DETAILS: $date, $startTime, $endTime, $securityGuardId');
 
       String message = 'Patrol was not uploaded.';
@@ -295,7 +295,7 @@ class _PatrolPageState extends State<PatrolPage> {
         message = 'Patrol was uploaded successfully.';
       } catch (e) {
         // Handle any errors if needed
-        print('Error: $e');
+        debugPrint('Error: $e');
       }
 
       // Display message using SnackBar if widget is still mounted

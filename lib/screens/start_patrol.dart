@@ -18,7 +18,7 @@ class StartPatrolPage extends StatelessWidget {
             CupertinoButton.filled(
               onPressed: () {
                 // Add your logic for starting the patrol session here
-                print('Starting Patrol Session with Guard Verification');
+                debugPrint('Starting Patrol Session with Guard Verification');
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const verifyGuardTag()));
               },

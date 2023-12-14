@@ -50,7 +50,7 @@ class _verifyGuardTagState extends State<verifyGuardTag> {
         UserInputProvider userInputProvider =
             Provider.of<UserInputProvider>(context, listen: false);
         userInputProvider.setUserInput(userInput);
-        print(userInput);
+        debugPrint(userInput);
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

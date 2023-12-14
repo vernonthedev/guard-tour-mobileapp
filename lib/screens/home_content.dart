@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import '../functions/get_home_patrols.dart';
 import '../models/home_model.dart';
 import 'package:intl/intl.dart';
@@ -12,10 +12,10 @@ class HomePageContent extends StatefulWidget {
 }
 
 class _HomePageContentState extends State<HomePageContent> {
+  DateTime? selectedDate; // Initialize as null
   List<HomeDetails> patrols = [];
-  bool isNightShift = false;
   TextEditingController searchController = TextEditingController();
-  DateTime selectedDate = DateTime.now();
+  // DateTime selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -24,32 +24,40 @@ class _HomePageContentState extends State<HomePageContent> {
   }
 
   Future<void> _loadPatrolsFromHive() async {
-    patrols = await getHomeDetails();
-    patrols.sort((a, b) => b.date.compareTo(a.date));
-    setState(() {});
-  }
-
-  Future<List<HomeDetails>> _filterPatrols(String query) async {
     List<HomeDetails> allPatrols = await getHomeDetails();
+    List<HomeDetails> filteredPatrols = List.from(allPatrols);
 
-    List<HomeDetails> filteredPatrols = allPatrols
-        .where((patrol) =>
-            patrol
-                .getSecurityGuardDetails()
-                .firstName
-                .toLowerCase()
-                .contains(query.toLowerCase()) ||
-            patrol
-                .getSecurityGuardDetails()
-                .lastName
-                .toLowerCase()
-                .contains(query.toLowerCase()) ||
-            ('${patrol.getSecurityGuardDetails().firstName} ${patrol.getSecurityGuardDetails().lastName}')
-                .toLowerCase()
-                .contains(query.toLowerCase()))
-        .toList();
+    if (selectedDate != null) {
+      // Apply date filter
+      filteredPatrols = filteredPatrols
+          .where((patrol) =>
+              patrol.date == selectedDate?.toLocal().toString().split(' ')[0])
+          .toList();
+    }
 
-    return filteredPatrols;
+    if (searchController.text.isNotEmpty) {
+      // Apply search filter
+      filteredPatrols = filteredPatrols
+          .where((patrol) =>
+              patrol
+                  .getSecurityGuardDetails()
+                  .firstName
+                  .toLowerCase()
+                  .contains(searchController.text.toLowerCase()) ||
+              patrol
+                  .getSecurityGuardDetails()
+                  .lastName
+                  .toLowerCase()
+                  .contains(searchController.text.toLowerCase()) ||
+              ('${patrol.getSecurityGuardDetails().firstName} ${patrol.getSecurityGuardDetails().lastName}')
+                  .toLowerCase()
+                  .contains(searchController.text.toLowerCase()))
+          .toList();
+    }
+
+    setState(() {
+      patrols = filteredPatrols;
+    });
   }
 
   @override
@@ -79,25 +87,7 @@ class _HomePageContentState extends State<HomePageContent> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
-          Center(
-            child: SizedBox(
-              width: double.infinity,
-              child: CupertinoTextField(
-                controller: searchController,
-                placeholder: 'Search by Guard Name',
-                onChanged: (query) {
-                  _filterPatrols(query).then((filteredPatrols) {
-                    setState(() {
-                      // Update your original list if you need it for other purposes
-                      patrols = filteredPatrols;
-                    });
-                  });
-                },
-                prefix: const Icon(CupertinoIcons.search),
-              ),
-            ),
-          ),
+          const SizedBox(height: 50),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
@@ -108,10 +98,9 @@ class _HomePageContentState extends State<HomePageContent> {
                   style: TextStyle(fontSize: 18),
                 ),
                 CupertinoSwitch(
-                  value: isNightShift,
+                  value: false,
                   onChanged: (value) {
                     setState(() {
-                      isNightShift = value;
                       // TODO: Implement night shift filter
                     });
                   },
@@ -119,76 +108,38 @@ class _HomePageContentState extends State<HomePageContent> {
               ],
             ),
           ),
-          const Text(
-            "All Site Patrols",
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          const SizedBox(height: 10),
+          TextField(
+            controller: searchController,
+            decoration:
+                const InputDecoration(labelText: 'Search by Guard Name'),
+            onChanged: (query) {
+              _loadPatrolsFromHive();
+            },
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                onPressed: () => _selectDate(context),
-                child: const Text('Filter by Date'),
-              ),
-            ],
+          ElevatedButton(
+            onPressed: () => _selectDate(context),
+            child: const Text('Filter by Date'),
           ),
           Expanded(
-            child: FutureBuilder<List<HomeDetails>>(
-              future: searchController.text.isEmpty
-                  ? getHomeDetails() // Fetch all home details
-                  : _filterPatrols(
-                      searchController.text), // Fetch filtered details
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text('Error: ${snapshot.error}'),
-                  );
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(
-                    child: Text('No Patrol data available'),
-                  );
-                } else {
-                  patrols = snapshot.data!;
-                  List<HomeDetails> filteredPatrols = patrols
-                      .where((patrol) =>
-                          patrol.date ==
-                              selectedDate.toLocal().toString().split(' ')[0] &&
-                          patrol
-                              .getSecurityGuardDetails()
-                              .firstName
-                              .toLowerCase()
-                              .contains(searchController.text.toLowerCase()))
-                      .toList();
-
-                  return ListView.builder(
-                    itemCount: filteredPatrols.length,
-                    itemBuilder: (context, index) {
-                      final patrol = filteredPatrols[index];
-                      // Format the date
-                      String formattedDate = DateFormat('MMM dd, yyyy')
-                          .format(DateTime.parse(patrol.date));
-                      return ListTile(
-                        title: Text(
-                          'Guard Name: ${patrol.getSecurityGuardDetails().firstName} ${patrol.getSecurityGuardDetails().lastName}',
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Date: $formattedDate'),
-                            Text(
-                                'Time: ${patrol.startTime} - ${patrol.endTime}'),
-                          ],
-                        ),
-                        trailing: const Icon(
-                          CupertinoIcons.hourglass,
-                          color: CupertinoColors.systemYellow,
-                        ),
-                      );
-                    },
-                  );
-                }
+            child: ListView.builder(
+              itemCount: patrols.length,
+              itemBuilder: (context, index) {
+                final patrol = patrols[index];
+                String formattedDate = DateFormat('MMM dd, yyyy')
+                    .format(DateTime.parse(patrol.date));
+                return ListTile(
+                  title: Text(
+                    'Guard Name: ${patrol.getSecurityGuardDetails().firstName} ${patrol.getSecurityGuardDetails().lastName}',
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Date: $formattedDate'),
+                      Text('Time: ${patrol.startTime} - ${patrol.endTime}'),
+                    ],
+                  ),
+                );
               },
             ),
           ),
@@ -200,19 +151,17 @@ class _HomePageContentState extends State<HomePageContent> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate,
+      initialDate: selectedDate ??
+          DateTime.now(), // Use DateTime.now() if selectedDate is null
       firstDate: DateTime(2022),
       lastDate: DateTime(2024),
     );
-    if (picked != null && picked != selectedDate) {
+
+    if (picked != null) {
       setState(() {
         selectedDate = picked;
-        _filterPatrols(searchController.text).then((filteredPatrols) {
-          setState(() {
-            patrols = filteredPatrols;
-          });
-        });
       });
+      _loadPatrolsFromHive();
     }
   }
 }

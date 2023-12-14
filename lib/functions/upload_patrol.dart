@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,7 +12,8 @@ Future<void> postData(String date, String startTime, String endTime,
 
   // Check if authToken is available
   if (authToken == null || authToken.isEmpty) {
-    print('Failed to retrieve authentication token. Aborting post request.');
+    debugPrint(
+        'Failed to retrieve authentication token. Aborting post request.');
     return;
   }
 
@@ -39,15 +41,11 @@ Future<void> postData(String date, String startTime, String endTime,
     if (response.statusCode == 201 || response.statusCode == 200) {
       // Parse the JSON response into a Map
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-
-      // Print the details to the console
-      print('Patrol Details: $jsonResponse');
     } else {
-      print('Error: An Error Has occurred');
-      print('Error: ${response.statusCode} - ${response.reasonPhrase}');
+      debugPrint('Error: ${response.statusCode} - ${response.reasonPhrase}');
     }
   } catch (e) {
-    print('Error making post request: $e');
+    debugPrint('Error making post request: $e');
   }
 }
 

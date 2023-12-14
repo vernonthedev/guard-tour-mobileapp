@@ -4,6 +4,7 @@ Developer: vernonthedev
 File Name: get_site_details.dart
 */
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:guard_tour/functions/decode_token.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,20 +41,20 @@ Future<List<HomeDetails>> getHomeDetails() async {
         // Return the fetched data
         return homeDetailsList;
       } else {
-        // Handle the error, e.g., print an error message
-        print('Failed to fetch data. Status code: ${response.statusCode}');
+        // Handle the error, e.g., debugPrint an error message
+        debugPrint('Failed to fetch data. Status code: ${response.statusCode}');
         // If an error occurs, you might want to throw an exception or return an empty list.
         throw Exception(
             'Failed to fetch data. Status code: ${response.statusCode}');
       }
     } else {
-      print("User Data or Token is null");
+      debugPrint("User Data or Token is null");
       // If user data or token is null, you might want to throw an exception or return an empty list.
       throw Exception('User Data or Token is null');
     }
   } catch (e) {
     // Handle any exceptions that occur during the process
-    print('Error: $e');
+    debugPrint('Error: $e');
     // If an error occurs, you might want to throw an exception or return an empty list.
     throw Exception('Error: $e');
   }

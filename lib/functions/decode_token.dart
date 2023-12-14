@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserData {
@@ -29,20 +30,20 @@ Future<UserData?> decodeTokenFromSharedPreferences() async {
     String? token = prefs.getString('token');
 
     if (token != null) {
-      print('Retrieved token: $token');
+      debugPrint('Retrieved token: $token');
 
       try {
         return decodeToken(token);
       } catch (e) {
-        print('Error decoding token: $e');
+        debugPrint('Error decoding token: $e');
         return null;
       }
     } else {
-      print('Token is null. Unable to decode.');
+      debugPrint('Token is null. Unable to decode.');
       return null;
     }
   } catch (e) {
-    print('Error retrieving SharedPreferences: $e');
+    debugPrint('Error retrieving SharedPreferences: $e');
     return null;
   }
 }
@@ -60,7 +61,7 @@ UserData decodeToken(String token) {
 
   // Parse the JSON payload
   Map<String, dynamic> payload = json.decode(decodedPayload);
-  print('Decoded payload: $payload');
+  debugPrint('Decoded payload: $payload');
 
   // Extract the required fields
   int guardId = payload['sub'];
