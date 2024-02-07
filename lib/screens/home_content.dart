@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../functions/get_home_patrols.dart';
 import '../models/home_model.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class HomePageContent extends StatefulWidget {
   const HomePageContent({Key? key}) : super(key: key);
@@ -12,9 +14,8 @@ class HomePageContent extends StatefulWidget {
 }
 
 class _HomePageContentState extends State<HomePageContent> {
-  DateTime? selectedDate; // Initialize as null
   List<HomeDetails> patrols = [];
-  TextEditingController searchController = TextEditingController();
+
   // DateTime selectedDate = DateTime.now();
 
   @override
@@ -25,39 +26,6 @@ class _HomePageContentState extends State<HomePageContent> {
 
   Future<void> _loadPatrolsFromHive() async {
     List<HomeDetails> allPatrols = await getHomeDetails();
-    List<HomeDetails> filteredPatrols = List.from(allPatrols);
-
-    if (selectedDate != null) {
-      // Apply date filter
-      filteredPatrols = filteredPatrols
-          .where((patrol) =>
-              patrol.date == selectedDate?.toLocal().toString().split(' ')[0])
-          .toList();
-    }
-
-    if (searchController.text.isNotEmpty) {
-      // Apply search filter
-      filteredPatrols = filteredPatrols
-          .where((patrol) =>
-              patrol
-                  .getSecurityGuardDetails()
-                  .firstName
-                  .toLowerCase()
-                  .contains(searchController.text.toLowerCase()) ||
-              patrol
-                  .getSecurityGuardDetails()
-                  .lastName
-                  .toLowerCase()
-                  .contains(searchController.text.toLowerCase()) ||
-              ('${patrol.getSecurityGuardDetails().firstName} ${patrol.getSecurityGuardDetails().lastName}')
-                  .toLowerCase()
-                  .contains(searchController.text.toLowerCase()))
-          .toList();
-    }
-
-    setState(() {
-      patrols = filteredPatrols;
-    });
   }
 
   @override
@@ -66,63 +34,31 @@ class _HomePageContentState extends State<HomePageContent> {
       body: Column(
         children: [
           const SizedBox(height: 50),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: const <Widget>[
-                Icon(
-                  CupertinoIcons.xmark_shield_fill,
-                  color: Color(0xFF2E8B57),
-                  size: 24,
-                ),
-                SizedBox(width: 8),
-                Text(
-                  'Guard Tour Home',
-                  style: TextStyle(
-                    fontSize: 24,
+          FutureBuilder<String?>(
+            future: _getSiteName(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                String siteName = snapshot.data ??
+                    'Guard Tour Home'; // Use a default value if site name is not available
+                return Text(
+                  siteName,
+                  style: const TextStyle(
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
-                ),
-              ],
-            ),
+                );
+              }
+            },
           ),
-          const SizedBox(height: 50),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Night Shift',
-                  style: TextStyle(fontSize: 18),
-                ),
-                CupertinoSwitch(
-                  value: false,
-                  onChanged: (value) {
-                    setState(() {
-                      // TODO: Implement night shift filter
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: TextField(
-              controller: searchController,
-              decoration:
-                  const InputDecoration(labelText: 'Search by Guard Name'),
-              onChanged: (query) {
-                _loadPatrolsFromHive();
-              },
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () => _selectDate(context),
-            child: const Text('Filter by Date'),
+          const SizedBox(height: 30),
+          CupertinoButton(
+            onPressed: () {},
+            color: const Color(0xFF2E8B57),
+            child: const Text("Submit All"),
           ),
           Expanded(
             child: ListView.builder(
@@ -152,21 +88,16 @@ class _HomePageContentState extends State<HomePageContent> {
       ),
     );
   }
+}
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate ??
-          DateTime.now(), // Use DateTime.now() if selectedDate is null
-      firstDate: DateTime(2022),
-      lastDate: DateTime(2024),
-    );
-
-    if (picked != null) {
-      setState(() {
-        selectedDate = picked;
-      });
-      _loadPatrolsFromHive();
-    }
+// Get the site name sharedpreferences
+Future<String?> _getSiteName() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? siteData = prefs.getString('siteData');
+  if (siteData != null) {
+    Map<String, dynamic> decodedData = jsonDecode(siteData);
+    return decodedData['name']; // Accessing the 'name' field directly
+  } else {
+    return null;
   }
 }
