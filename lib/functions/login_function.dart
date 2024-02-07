@@ -15,15 +15,9 @@ Future<String?> loginUser(String siteId) async {
       var jsonResponse = json.decode(response.body);
 
       if (jsonResponse.isNotEmpty) {
-        // Assuming you want to parse the response and extract specific fields
-        String? tagId = jsonResponse['tagId'];
-        String? name = jsonResponse['name'];
-        List<Map<String, dynamic>> tags =
-            List<Map<String, dynamic>>.from(jsonResponse['tags']);
-        String message = 'Successful Login';
-        debugPrint("Name: $name And Tag ID: $tagId And Tags Include: $tags");
-
-        return message;
+        //save the site data coming from the api only if the response is not empty
+        await _saveSiteData(jsonResponse);
+        return 'Successful Login';
       } else {
         return 'No data found for the provided site ID.';
       }
@@ -36,7 +30,8 @@ Future<String?> loginUser(String siteId) async {
   }
 }
 
-// Future<void> _saveToken(String token) async {
-//   SharedPreferences prefs = await SharedPreferences.getInstance();
-//   await prefs.setString('token', token);
-// }
+//function to save the received site data into shared preferences
+Future<void> _saveSiteData(Map<String, dynamic> siteData) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('siteData', jsonEncode(siteData));
+}
