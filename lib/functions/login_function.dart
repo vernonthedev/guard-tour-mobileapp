@@ -1,53 +1,42 @@
-/*
-Project Name: Guard Tour Mobile App
-Developer: vernonthedev
-File Name: login_function.dart
-*/
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Logging user, by hitting the api endpoint and retrieving the token
-Future<String?> loginUser(String username, String password) async {
-  // hit the endpoint using the http package
-  var url = Uri.parse('https://guardtour.legitsystemsug.com/auth/signin');
+Future<String?> loginUser(String siteId) async {
+  var url = Uri.parse('https://guardtour.legitsystemsug.com/sites/$siteId');
+
   try {
-    var response = await http.post(
-      url,
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
-      // make sure you post the data recieved from input as json to the api
-      body: jsonEncode(<String, String>{
-        'username': username,
-        'password': password,
-      }),
-    );
-    // on successful api requesting
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    var response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+    });
+
+    if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
-      if (jsonResponse.containsKey('access_token')) {
-        String token = jsonResponse['access_token'];
-        // Store token in SharedPreferences
-        await _saveToken(token);
-        return token;
+
+      if (jsonResponse.isNotEmpty) {
+        // Assuming you want to parse the response and extract specific fields
+        String? tagId = jsonResponse['tagId'];
+        String? name = jsonResponse['name'];
+        List<Map<String, dynamic>> tags =
+            List<Map<String, dynamic>>.from(jsonResponse['tags']);
+        String message = 'Successful Login';
+        debugPrint("Name: $name And Tag ID: $tagId And Tags Include: $tags");
+
+        return message;
       } else {
-        debugPrint('Token not found in the response.');
-        return null;
+        return 'No data found for the provided site ID.';
       }
     } else {
-      debugPrint('Request failed with status: ${response.statusCode}');
-      return null;
+      return 'Timeout! with status code: ${response.statusCode}';
     }
   } catch (e) {
     debugPrint('Exception occurred: $e');
-    return null;
+    return 'Incorrect Site ID';
   }
 }
 
-// saving token data to storage of sharedpreferences
-Future<void> _saveToken(String token) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString('token', token);
-}
+// Future<void> _saveToken(String token) async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   await prefs.setString('token', token);
+// }

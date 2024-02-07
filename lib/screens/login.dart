@@ -6,7 +6,6 @@ File Name: home.dart
 
 import 'package:flutter/material.dart';
 import 'package:guard_tour/screens/home.dart';
-import 'verify_guard.dart';
 import 'package:flutter/cupertino.dart';
 import '../functions/login_function.dart';
 
@@ -20,20 +19,16 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   late final TextEditingController _siteID;
-  late final TextEditingController _password;
-  bool _isPasswordVisible = false;
 
   @override
   void initState() {
     _siteID = TextEditingController();
-    _password = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
     _siteID.dispose();
-    _password.dispose();
     super.dispose();
   }
 
@@ -65,34 +60,8 @@ class _LoginPageState extends State<LoginPage> {
                 autocorrect: false,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  hintText: "Enter Your Unique ID/Scan UID tag",
+                  hintText: "Scan Site tag",
                   prefixIcon: Icon(CupertinoIcons.building_2_fill),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TextField(
-                controller: _password,
-                obscureText: !_isPasswordVisible,
-                enableSuggestions: false,
-                autocorrect: false,
-                decoration: InputDecoration(
-                  hintText: "Enter Password",
-                  prefixIcon: Icon(CupertinoIcons.lock_shield_fill),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible
-                          ? CupertinoIcons.eye_slash_fill
-                          : CupertinoIcons.eye_fill,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  ),
                 ),
               ),
             ),
@@ -100,22 +69,36 @@ class _LoginPageState extends State<LoginPage> {
             CupertinoButton(
               onPressed: () async {
                 final siteID = _siteID.text;
-                final password = _password.text;
                 setState(() {
                   _isLoading = true;
                 });
-                String? token = await loginUser(siteID, password);
+                String? message = await loginUser(siteID);
                 setState(() {
                   _isLoading = false;
                 });
-                if (token != null) {
+                if (message != null && message == "Successful Login") {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("$message Welcome To Guard Tour"),
+                      backgroundColor: Colors.green,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                  //route to home
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => const HomePage()));
+                } else if (message != null && message == "Incorrect Site ID") {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(message),
+                      backgroundColor: Colors.red,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text(
-                          'Login Failed! Please Enter Correct Credentials'),
+                      content: Text("Time Out!"),
                       backgroundColor: Colors.red,
                       duration: Duration(seconds: 2),
                     ),
