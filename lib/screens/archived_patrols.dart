@@ -78,7 +78,7 @@ class _ArchivedPatrolsState extends State<ArchivedPatrols> {
                 SizedBox(width: 8),
                 // THE HOME TITLE WIDGET
                 Text(
-                  'All Archived Patrols',
+                  'All Failed Patrols',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,

@@ -65,20 +65,23 @@ class SiteProfileList extends StatelessWidget {
     }
     return Material(
       // Wrap the ListView in a Material widget
-      child: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          _buildListTile('Name of Site', siteDetails?.name),
-          _buildListTile('Site ID', siteDetails?.id),
-          _buildListTile('Company\'s ID', siteDetails?.companyId),
-          _buildListTile('Site Latitude', siteDetails?.latitude),
-          _buildListTile('Site Longitude', siteDetails?.longitude),
-          _buildListTile('Site Phone Number', siteDetails?.phoneNumber),
-          _buildListTile('Supervisor\'s Name', siteDetails?.supervisorName),
-          _buildListTile(
-              'Supervisor\'s Phone Number', siteDetails?.supervisorPhoneNumber),
-          _buildListTile('Patrol Plan', siteDetails?.patrolPlanType),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: [
+            _buildListTile('Name of Site', siteDetails?.name),
+            _buildListTile('Site ID', siteDetails?.id),
+            _buildListTile('Company\'s ID', siteDetails?.companyId),
+            _buildListTile('Site Latitude', siteDetails?.latitude),
+            _buildListTile('Site Longitude', siteDetails?.longitude),
+            _buildListTile('Site Phone Number', siteDetails?.phoneNumber),
+            _buildListTile('Supervisor\'s Name', siteDetails?.supervisorName),
+            _buildListTile('Supervisor\'s Phone Number',
+                siteDetails?.supervisorPhoneNumber),
+            _buildListTile('Patrol Plan', siteDetails?.patrolPlanType),
+          ],
+        ),
       ),
     );
   }
