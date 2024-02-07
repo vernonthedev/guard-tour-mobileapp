@@ -22,9 +22,9 @@ class StartPatrolPage extends StatelessWidget {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const verifyGuardTag()));
               },
-              child: Row(
+              child: const Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(CupertinoIcons.play_circle_fill),
                   SizedBox(width: 8.0),
                   Text('Start Patrol Session'),

@@ -5,23 +5,13 @@ File Name: main.dart
 */
 
 import 'package:flutter/material.dart';
-import 'package:guard_tour/functions/user_input_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'models/boxes.dart';
-import 'screens/home.dart';
 import 'screens/login.dart';
-import 'package:provider/provider.dart';
 
 // Main starter function for the whole application
 void main() async {
-  // initialise the hive database
-  WidgetsFlutterBinding.ensureInitialized();
-  await Boxes.init(); // Initialize Hive
-  // run the application after the db initialization
-  runApp(ChangeNotifierProvider(
-    create: (context) => UserInputProvider(),
-    child: const MyApp(),
-  ));
+  runApp(
+    const MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -41,7 +31,7 @@ class MyApp extends StatelessWidget {
             // Use the custom color as the primary swatch
             customColor,
       ),
-      home: const CheckTokenAndNavigate(),
+      home: const LoginPage(),
     );
   }
 
@@ -69,39 +59,5 @@ class MyApp extends StatelessWidget {
     }
 
     return MaterialColor(color.value, swatch);
-  }
-}
-
-// checking if the token is available in sharedpreferences of the application storage
-// so that we route the user to home if found or to the login page to start a new login session
-class CheckTokenAndNavigate extends StatelessWidget {
-  const CheckTokenAndNavigate({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<String?>(
-      // wait to the getting token functionality(that's why its a future)
-      future: _getToken(),
-      builder: (context, snapshot) {
-        // incase we are done getting a snapshot of the retrieved storage info
-        if (snapshot.connectionState == ConnectionState.done) {
-          // incase that snapshot has some token value and its not null then we route accordingly
-          if (snapshot.hasData && snapshot.data != null) {
-            return const HomePage();
-          } else {
-            return const LoginPage();
-          }
-        }
-        // display a circular progress indicator incase we are performing the
-        // retrieval operations
-        return const Scaffold(body: Center(child: CircularProgressIndicator()));
-      },
-    );
-  }
-
-  // Function to retrieve the token from shared preference storage
-  Future<String?> _getToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token');
   }
 }

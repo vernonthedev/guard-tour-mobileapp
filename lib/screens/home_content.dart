@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../functions/get_home_patrols.dart';
 import '../models/home_model.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,11 +20,6 @@ class _HomePageContentState extends State<HomePageContent> {
   @override
   void initState() {
     super.initState();
-    _loadPatrolsFromHive();
-  }
-
-  Future<void> _loadPatrolsFromHive() async {
-    List<HomeDetails> allPatrols = await getHomeDetails();
   }
 
   @override
@@ -71,13 +65,13 @@ class _HomePageContentState extends State<HomePageContent> {
                 return ListTile(
                   leading: Text('$listNumber'),
                   title: Text(
-                    'Guard Name: ${patrol.getSecurityGuardDetails().firstName} ${patrol.getSecurityGuardDetails().lastName}',
+                    'Guard Name: ',
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Date: $formattedDate'),
-                      Text('Time: ${patrol.startTime} - ${patrol.endTime}'),
+                      Text('Time: ${patrol.startTime}'),
                     ],
                   ),
                 );

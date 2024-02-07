@@ -6,9 +6,6 @@ File Name: settings.dart
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../models/boxes.dart';
-import 'archived_patrols.dart';
 import 'login.dart';
 
 // stless bcoz it only contains a list of tiles, doing minimalistic state changing functions
@@ -37,9 +34,7 @@ class Settings extends StatelessWidget {
             leading: const Icon(CupertinoIcons.archivebox_fill),
             title: const Text('View Failed Patrols'),
             onTap: () {
-              //archive Patrol page
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const ArchivedPatrols()));
+              //
             },
           ),
           const Divider(),
@@ -48,15 +43,6 @@ class Settings extends StatelessWidget {
             title: const Text('Delete All Failed Patrols'),
             onTap: () {
               // Call the function to delete all patrols
-              Boxes.deleteAllPatrols();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('All Failed Patrols Deleted Successfully'),
-                  backgroundColor: Colors.yellow,
-                  duration: Duration(
-                      seconds: 2), // You can adjust the duration as needed
-                ),
-              );
             },
           ),
           const Divider(),
@@ -90,23 +76,11 @@ class Settings extends StatelessWidget {
             title: const Text('Logout'),
             onTap: () async {
               // logout the user
-              await _logout(context);
             },
           ),
           const Divider(),
         ],
       ),
     );
-  }
-
-  // logging out the user by clearing the token from the sharedpreferences
-  Future<void> _logout(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token'); // Remove token from SharedPreferences
-    // Navigate back to the login page
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginPage()),
-    ); // Replace with your route name for the login page
   }
 }
