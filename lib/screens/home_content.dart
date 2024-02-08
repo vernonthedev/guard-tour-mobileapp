@@ -64,7 +64,7 @@ class _HomePageContentState extends State<HomePageContent> {
                 int listNumber = index + 1;
                 return ListTile(
                   leading: Text('$listNumber'),
-                  title: Text(
+                  title: const Text(
                     'Guard Name: ',
                   ),
                   subtitle: Column(

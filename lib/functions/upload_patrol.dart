@@ -3,26 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> postData(String date, String startTime, String endTime,
-    String securityGuardId) async {
-  const url = 'https://guardtour.legitsystemsug.com/patrols';
+Future<String?> postData(String date, String startTime) async {
+  // get data from shared preferences
+  final String? guardID = await getGuardId();
+  final String? siteID = await _getSiteID();
 
-  // Retrieve token from SharedPreferences
-  String? authToken = await _getToken();
-
-  // Check if authToken is available
-  if (authToken == null || authToken.isEmpty) {
-    debugPrint(
-        'Failed to retrieve authentication token. Aborting post request.');
-    return;
+  if (guardID == null && siteID == null) {
+    debugPrint('Guard ID and Site ID not found in SharedPreferences');
+    return 'Guard ID and Site ID not found in SharedPreferences';
   }
+
+  const url = 'https://guardtour.legitsystemsug.com/patrols';
 
   // Your JSON payload
   final Map<String, dynamic> data = {
     'date': date,
     'startTime': startTime,
-    'endTime': endTime,
-    'securityGuardUniqueId': securityGuardId,
+    'securityGuardUniqueId': guardID,
+    'siteTagId': siteID,
   };
 
   // Encode the payload to JSON
@@ -33,7 +31,6 @@ Future<void> postData(String date, String startTime, String endTime,
       Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $authToken',
       },
       body: jsonData,
     );
@@ -41,16 +38,32 @@ Future<void> postData(String date, String startTime, String endTime,
     if (response.statusCode == 201 || response.statusCode == 200) {
       // Parse the JSON response into a Map
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      debugPrint(jsonResponse.toString());
+      return 'success';
     } else {
       debugPrint('Error: ${response.statusCode} - ${response.reasonPhrase}');
     }
   } catch (e) {
     debugPrint('Error making post request: $e');
+    return 'Error Uploading Patrol';
+  }
+  return null;
+}
+
+// Get the siteId from shared preferences
+Future<String?> _getSiteID() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final String? siteData = prefs.getString('siteData');
+  if (siteData != null) {
+    final Map<String, dynamic> decodedData = jsonDecode(siteData);
+    return decodedData['tagId'];
+  } else {
+    return null;
   }
 }
 
-// Retrieve token from SharedPreferences
-Future<String?> _getToken() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getString('token');
+//get the security guard id from shared preferences
+Future<String?> getGuardId() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('guardID');
 }

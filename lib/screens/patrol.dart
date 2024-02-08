@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:guard_tour/functions/upload_patrol.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+
+import 'home.dart';
 
 class PatrolPage extends StatefulWidget {
   const PatrolPage({Key? key}) : super(key: key);
@@ -12,6 +15,8 @@ class PatrolPage extends StatefulWidget {
 }
 
 class _PatrolPageState extends State<PatrolPage> {
+  late DateTime firstScannedTime = DateTime.now();
+  late DateTime? firstScannedDate;
   late Future<void> _userDataFuture;
   List<Map<String, dynamic>>? siteTags;
   late List<bool> tagScannedStatus;
@@ -120,8 +125,7 @@ class _PatrolPageState extends State<PatrolPage> {
                       child: CupertinoButton(
                         onPressed: () async {
                           //upload the patrol from here
-                          // uploadPatrol();
-                          debugPrint("Patrol has been uploaded");
+                          uploadPatrol();
                         },
                         color: const Color(0xFF2E8B57),
                         child: const Text("Submit Patrol"),
@@ -223,80 +227,57 @@ class _PatrolPageState extends State<PatrolPage> {
       },
     );
   }
-  // void uploadPatrol() async {
-  //   // Ensure that at least one tag has been scanned
-  //   if (_scannedTags.isNotEmpty) {
-  //     // Use the date when the first scan was made
-  //     String date = DateFormat("yyyy-MM-dd").format(firstScannedTime!);
 
-  //     // Format the startTime and endTime
-  //     String startTime = DateFormat("HH:mm").format(firstScannedTime!);
-  //     String endTime = DateFormat("HH:mm").format(lastScannedTime!);
+  void uploadPatrol() async {
+    // Ensure that at least one tag has been scanned
+    if (_scannedTags.isNotEmpty) {
+      // Use the date when the first scan was made
+      String date = DateFormat("yyyy-MM-dd").format(firstScannedTime);
 
-  //     UserInputProvider userInputProvider =
-  //         Provider.of<UserInputProvider>(context, listen: false);
-  //     String? securityGuardId = userInputProvider.userInput;
-  //     //TODO:PLACE THE SECURITY ID HERE
+      // Format the startTime and endTime
+      String startTime = DateFormat("HH:mm").format(firstScannedTime);
 
-  //     debugPrint(securityGuardId);
-  //     // Call the function to make the POST request
-  //     debugPrint(
-  //         '**************DETAILS: $date, $startTime, $endTime, $securityGuardId');
+      // Call the function to make the POST request
+      debugPrint('**************DETAILS: $date, $startTime');
 
-  //     String message = 'Patrol was not uploaded.';
-
-  //     try {
-  //       // Call the function to make the POST request
-  //       await postData(date, startTime, endTime, securityGuardId ?? "");
-
-  //       // Update the success message
-  //       message = 'Patrol was uploaded successfully.';
-  //     } catch (e) {
-  //       // Handle any errors if needed
-  //       debugPrint('Error: $e');
-  //     }
-
-  //     // Display message using SnackBar if widget is still mounted
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: Text(message),
-  //           backgroundColor:
-  //               message.contains('success') ? Colors.green : Colors.red,
-  //           duration: const Duration(seconds: 5),
-  //         ),
-  //       );
-  //     }
-
-  //     // Wait for SnackBar to complete before navigating
-  //     await Future.delayed(const Duration(seconds: 5));
-
-  //     // Navigate to the home screen if widget is still mounted
-  //     if (mounted) {
-  //       Navigator.of(context).pushReplacement(
-  //         MaterialPageRoute(builder: (context) => const HomePage()),
-  //       );
-  //     }
-  //   } else {
-  //     // Display a message if no tags have been scanned
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return AlertDialog(
-  //           title: const Text('Error'),
-  //           content: const Text(
-  //               'No tags have been scanned. Patrol was not uploaded.'),
-  //           actions: <Widget>[
-  //             TextButton(
-  //               onPressed: () {
-  //                 Navigator.of(context).pop();
-  //               },
-  //               child: const Text('OK'),
-  //             ),
-  //           ],
-  //         );
-  //       },
-  //     );
-  //   }
-  // }
+      try {
+        // Call the function to make the POST request
+        String? message = await postData(date, startTime);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message!),
+            backgroundColor:
+                message.contains('success') ? Colors.green : Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      } catch (e) {
+        // Handle any errors if needed
+        debugPrint('Error: $e');
+      }
+    } else {
+      // Display a message if no tags have been scanned
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: const Text(
+                'No tags have been scanned. Patrol was not uploaded.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 }
