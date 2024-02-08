@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:guard_tour/functions/upload_patrol.dart';
+import 'package:guard_tour/screens/failed_patrol.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-
-import 'home.dart';
+import 'successful_patrol.dart';
 
 class PatrolPage extends StatefulWidget {
   const PatrolPage({Key? key}) : super(key: key);
@@ -243,9 +243,16 @@ class _PatrolPageState extends State<PatrolPage> {
       try {
         // Call the function to make the POST request
         String? message = await postData(date, startTime);
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
+        if (message == 'success') {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const SuccessPage()),
+          );
+        } else {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const FailedPatrol()),
+          );
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(message!),
